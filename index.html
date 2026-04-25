@@ -339,6 +339,10 @@ body.light-mode canvas{opacity:0.3;}
 .view-info{color:#7a6a9a !important;}
 .s-row-label{color:#9a8aaa !important;}
 .achievement{color:#c0b0e0 !important;border-color:rgba(157,99,255,0.25) !important;background:rgba(157,99,255,0.08) !important;padding:8px 14px !important;font-size:12px !important;}
+.folder-tab{padding:3px 10px;border-radius:20px;border:1px solid rgba(157,99,255,0.15);background:transparent;color:#6a5a8a;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap;}
+.folder-tab:hover{background:rgba(157,99,255,0.1);color:#c084ff;}
+.folder-tab.active{background:rgba(157,99,255,0.18);border-color:rgba(157,99,255,0.4);color:#c084ff;}
+.chat-folder-tag{font-size:8px;padding:1px 5px;border-radius:4px;background:rgba(157,99,255,0.15);color:#9d63ff;margin-left:4px;text-transform:uppercase;letter-spacing:0.05em;}
 .code-copy-btn.run{background:rgba(0,255,100,0.1);color:#4ade80;border-color:rgba(0,255,100,0.3);}
 .code-copy-btn.run:hover{background:rgba(0,255,100,0.2);}
 .code-output{border-top:1px solid rgba(157,99,255,0.1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px;}
@@ -444,6 +448,15 @@ body.light-mode canvas{opacity:0.3;}
     <div class="hist-header">
       <span class="hist-title">HISTORY</span>
       <button class="hist-new-btn" onclick="newChat()">+ New</button>
+    </div>
+    <!-- Folder tabs -->
+    <div id="folderTabs" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 10px;border-bottom:1px solid rgba(157,99,255,0.08);">
+      <button class="folder-tab active" id="folder-all" onclick="setFolder('all',this)">All</button>
+      <button class="folder-tab" id="folder-2k" onclick="setFolder('2k',this)">2K</button>
+      <button class="folder-tab" id="folder-coding" onclick="setFolder('coding',this)">Coding</button>
+      <button class="folder-tab" id="folder-fitness" onclick="setFolder('fitness',this)">Fitness</button>
+      <button class="folder-tab" id="folder-music" onclick="setFolder('music',this)">Music</button>
+      <button class="folder-tab" id="folder-other" onclick="setFolder('other',this)">Other</button>
     </div>
     <div class="hist-list" id="histList"></div>
   </div>
@@ -854,6 +867,17 @@ var chatHistory=[],chatLoading=false,currentModel='demented-fast';
 var currentChatId=null,savedChats=[],historyVisible=true;
 var selectedPlan=null,currentAttachment=null;
 var STORAGE_KEY='dai_chats_v2_';
+var soundEnabled=true;var audioCtx=null;
+var voiceOutputEnabled=false;
+var lightMode=false;
+var webSearchEnabled=false;
+var currentMode='normal';
+var currentFolder='all';
+var userMemories=[];
+var onboardingStep=0;
+var pyodideInstance=null;
+var analyticsData={chats:0,images:0,voice:0,searches:0};
+var mediaRecorder=null;var audioChunks=[];var isListening=false;
 
 // STARS
 var cvs=document.getElementById('stars'),ctx=cvs.getContext('2d'),stars=[],nebulae=[],shoots=[];
@@ -1007,8 +1031,9 @@ function toggleHistory(){
 // HISTORY
 function loadChatHistory(){
   try{var raw=localStorage.getItem(STORAGE_KEY+(CURRENT_USER?CURRENT_USER.email:''));savedChats=raw?JSON.parse(raw):[];}catch(e){savedChats=[];}
-  renderHistoryList();
+  renderChatHistory();
 }
+function renderHistoryList(){renderChatHistory();}
 function saveChatHistory(){try{localStorage.setItem(STORAGE_KEY+(CURRENT_USER?CURRENT_USER.email:''),JSON.stringify(savedChats));}catch(e){}}
 function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
 function generateTitle(messages){var first=messages.find(function(m){return m.role==='user';});if(!first)return'New Chat';var c=typeof first.content==='string'?first.content:'[Attachment]';return c.slice(0,42)+(c.length>42?'..':'');}
@@ -1682,6 +1707,62 @@ function buildSearchContext(searchData,query){
   }
   ctx+='[Use the above search results to give an accurate, current answer]\n\n';
   return ctx;
+}
+
+// ── CHAT FOLDERS ──────────────────────────────────────────────────────
+var currentFolder='all';
+
+var FOLDER_KEYWORDS={
+  '2k':['2k','nba','mycareer','build','badge','dribble','jumpshot','park','rec','2k26','2k25','basketball','court'],
+  'coding':['code','javascript','python','html','css','react','node','function','error','debug','api','sql','git','typescript','programming','script'],
+  'fitness':['workout','gym','exercise','muscle','diet','protein','calories','fitness','training','cardio','lift','nutrition','supplement'],
+  'music':['music','beat','fl studio','ableton','logic','mix','master','produce','sample','melody','chord','rap','song','track','bpm'],
+};
+
+function detectFolder(title){
+  if(!title)return'other';
+  var lower=title.toLowerCase();
+  for(var folder in FOLDER_KEYWORDS){
+    if(FOLDER_KEYWORDS[folder].some(function(k){return lower.includes(k);}))return folder;
+  }
+  return'other';
+}
+
+function setFolder(folder,btn){
+  currentFolder=folder;
+  document.querySelectorAll('.folder-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  renderChatHistory();
+}
+
+function renderChatHistory(){
+  var list=document.getElementById('histList');
+  if(!list)return;
+  list.innerHTML='';
+  var filtered=currentFolder==='all'?savedChats:savedChats.filter(function(c){return detectFolder(c.title)===currentFolder;});
+  if(filtered.length===0){
+    list.innerHTML='<div style="font-size:11px;color:#4a2a6a;text-align:center;padding:16px;">No chats in this folder</div>';
+    return;
+  }
+  filtered.forEach(function(chat){
+    var item=document.createElement('div');
+    item.className='chat-item'+(chat.id===currentChatId?' active':'');
+    var folder=detectFolder(chat.title);
+    var folderColors={'2k':'#f59e0b','coding':'#60a5fa','fitness':'#34d399','music':'#f472b6','other':'#9d63ff'};
+    var folderColor=folderColors[folder]||'#9d63ff';
+    item.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;width:100%;">'+
+      '<div style="flex:1;overflow:hidden;">'+
+        '<div class="chat-item-title" style="display:flex;align-items:center;gap:4px;">'+
+          '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escHtml(chat.title||'New Chat')+'</span>'+
+          (currentFolder==='all'&&folder!=='other'?'<span style="font-size:8px;padding:1px 5px;border-radius:4px;background:'+folderColor+'22;color:'+folderColor+';flex-shrink:0;text-transform:uppercase;letter-spacing:0.05em;">'+folder+'</span>':'')+
+        '</div>'+
+        '<div class="chat-item-date">'+formatDate(chat.updatedAt)+'</div>'+
+      '</div>'+
+      '<button onclick="deleteChat(\''+chat.id+'\',event)" style="background:none;border:none;color:#4a2a6a;cursor:pointer;padding:2px 4px;flex-shrink:0;font-size:12px;" title="Delete">✕</button>'+
+    '</div>';
+    item.onclick=function(e){if(e.target.tagName!=='BUTTON')loadChat(chat.id);};
+    list.appendChild(item);
+  });
 }
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────
