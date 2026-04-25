@@ -334,6 +334,12 @@ body.light-mode canvas{opacity:0.3;}
 .code-copy-btn.run:hover{background:rgba(0,255,100,0.2);}
 .code-output{border-top:1px solid rgba(157,99,255,0.1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px;}
 .code-output-content{padding:4px;max-height:300px;overflow-y:auto;}
+.stat-card{background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.12);border-radius:12px;padding:16px;text-align:center;transition:border-color 0.2s;}
+.stat-card:hover{border-color:rgba(157,99,255,0.3);}
+.stat-icon{font-size:24px;margin-bottom:8px;}
+.stat-val{font-family:'Orbitron',sans-serif;font-size:22px;color:#c084ff;font-weight:700;margin-bottom:4px;}
+.stat-label{font-size:10px;color:#4a2a6a;text-transform:uppercase;letter-spacing:0.08em;}
+.achievement{padding:6px 12px;border-radius:20px;border:1px solid rgba(157,99,255,0.2);background:rgba(157,99,255,0.06);font-size:11px;color:#9a8aaa;}
 </style>
 </head>
 <body>
@@ -411,6 +417,10 @@ body.light-mode canvas{opacity:0.3;}
     <div class="sb-btn" id="nav-admin" onclick="setView('admin',this)" style="display:none;">
       <svg viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="5.5" r="2.5" stroke="#f59e0b" stroke-width="1.3"/><path d="M3 14c0-3.04 2.46-5.5 5.5-5.5S14 10.96 14 14" stroke="#f59e0b" stroke-width="1.3" stroke-linecap="round"/><path d="M12 8l1.5 1.5L16 7" stroke="#f59e0b" stroke-width="1.3" stroke-linecap="round"/></svg>
       <div class="sb-tip">Admin</div>
+    </div>
+    <div class="sb-btn" id="nav-analytics" onclick="setView('analytics',this);loadAnalytics()">
+      <svg viewBox="0 0 17 17" fill="none"><rect x="2" y="10" width="3" height="5" rx="1" fill="#c084ff"/><rect x="7" y="6" width="3" height="9" rx="1" fill="#c084ff"/><rect x="12" y="2" width="3" height="13" rx="1" fill="#c084ff"/></svg>
+      <div class="sb-tip">Stats</div>
     </div>
     <div class="sb-div"></div>
     <div class="sb-bottom">
@@ -605,6 +615,48 @@ body.light-mode canvas{opacity:0.3;}
     </div>
   </div>
 </div>
+
+  <!-- ANALYTICS VIEW -->
+  <div class="view" id="view-analytics">
+    <div style="padding:20px;max-width:700px;margin:0 auto;height:100%;overflow-y:auto;">
+      <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;letter-spacing:0.1em;margin-bottom:4px;">📊 YOUR STATS</div>
+      <div style="font-size:11px;color:#4a2a6a;margin-bottom:20px;">Track your Demented AI usage</div>
+
+      <!-- Stat cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" id="statCards">
+        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-val" id="stat-chats">—</div><div class="stat-label">Messages Sent</div></div>
+        <div class="stat-card"><div class="stat-icon">🎨</div><div class="stat-val" id="stat-images">—</div><div class="stat-label">Images Generated</div></div>
+        <div class="stat-card"><div class="stat-icon">🎤</div><div class="stat-val" id="stat-voice">—</div><div class="stat-label">Voice Inputs</div></div>
+        <div class="stat-card"><div class="stat-icon">🔍</div><div class="stat-val" id="stat-searches">—</div><div class="stat-label">Web Searches</div></div>
+      </div>
+
+      <!-- Plan usage -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Plan Usage This Month</div>
+        <div style="margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#7a7a9a;margin-bottom:4px;"><span>Images</span><span id="anal-img-count">—</span></div>
+          <div style="height:6px;background:rgba(157,99,255,0.1);border-radius:3px;overflow:hidden;"><div id="anal-img-bar" style="height:100%;background:linear-gradient(90deg,#9d63ff,#c084ff);border-radius:3px;width:0%;transition:width 0.5s;"></div></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#7a7a9a;margin-bottom:4px;"><span>Messages</span><span id="anal-chat-count">—</span></div>
+          <div style="height:6px;background:rgba(157,99,255,0.1);border-radius:3px;overflow:hidden;"><div id="anal-chat-bar" style="height:100%;background:linear-gradient(90deg,#00ffcc,#00c9a7);border-radius:3px;width:0%;transition:width 0.5s;"></div></div>
+        </div>
+      </div>
+
+      <!-- Plan info -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
+        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Current Plan</div>
+        <div id="anal-plan-info" style="font-size:13px;color:#9a8aaa;line-height:1.8;"></div>
+        <button onclick="showUpgradeModal()" style="margin-top:12px;padding:8px 16px;border-radius:8px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">UPGRADE PLAN</button>
+      </div>
+
+      <!-- Achievements -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;">
+        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Achievements</div>
+        <div id="anal-achievements" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- ADMIN VIEW -->
   <div class="view" id="view-admin">
@@ -901,7 +953,7 @@ async function changePw(){
 }
 
 // NAV
-var VIEWS={chat:['CHAT','Ask anything'],image:['IMAGE GENERATOR','Create with AI'],code:['CODE EDITOR','Write · Run · Ask AI'],customize:['SETTINGS','Account & Preferences']};
+var VIEWS={chat:['CHAT','Ask anything'],image:['IMAGE GENERATOR','Create with AI'],code:['CODE EDITOR','Write · Run · Ask AI'],customize:['SETTINGS','Account & Preferences'],memory:['MEMORY','What the AI remembers about you'],analytics:['YOUR STATS','Track your usage'],admin:['ADMIN PANEL','Manage users']};
 function setView(name,btn){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
@@ -1596,6 +1648,67 @@ function buildSearchContext(searchData,query){
   ctx+='[Use the above search results to give an accurate, current answer]\n\n';
   return ctx;
 }
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────
+var analyticsData={chats:0,images:0,voice:0,searches:0};
+
+function loadAnalytics(){
+  if(!CURRENT_USER)return;
+  // Use data from current user object
+  var chats=CURRENT_USER.chat_count_month||0;
+  var images=CURRENT_USER.image_count_month||0;
+  var imgLimit=CURRENT_USER.image_limit||2;
+  var tier=CURRENT_USER.tier||'free';
+  var tierName=CURRENT_USER.tier_name||'Free';
+
+  // Update stat cards
+  document.getElementById('stat-chats').textContent=chats;
+  document.getElementById('stat-images').textContent=images;
+  document.getElementById('stat-voice').textContent=analyticsData.voice;
+  document.getElementById('stat-searches').textContent=analyticsData.searches;
+
+  // Update plan usage bars
+  document.getElementById('anal-img-count').textContent=images+' / '+imgLimit;
+  document.getElementById('anal-chat-count').textContent=chats+' this month';
+  var imgPct=Math.min(Math.round((images/imgLimit)*100),100);
+  document.getElementById('anal-img-bar').style.width=imgPct+'%';
+  var chatPct=Math.min(Math.round((chats/500)*100),100);
+  document.getElementById('anal-chat-bar').style.width=chatPct+'%';
+
+  // Plan info
+  var models=CURRENT_USER.models||['demented-fast'];
+  var modelNames=models.map(function(m){return m.replace('demented-','').charAt(0).toUpperCase()+m.replace('demented-','').slice(1);});
+  document.getElementById('anal-plan-info').innerHTML=
+    '<div>Plan: <span style="color:#c084ff;">'+tierName+'</span></div>'+
+    '<div>Models: <span style="color:#e0d0ff;">'+modelNames.join(', ')+'</span></div>'+
+    '<div>Image limit: <span style="color:#e0d0ff;">'+imgLimit+'/month</span></div>'+
+    (CURRENT_USER.subscription_end&&tier!=='lifetime'?'<div>Renews: <span style="color:#e0d0ff;">'+new Date(CURRENT_USER.subscription_end).toLocaleDateString()+'</span></div>':'');
+
+  // Achievements
+  var achievements=[];
+  if(chats>=1)achievements.push('🎯 First Message');
+  if(chats>=10)achievements.push('💬 Chatterbox');
+  if(chats>=50)achievements.push('🔥 Power User');
+  if(chats>=100)achievements.push('⚡ Demented Regular');
+  if(images>=1)achievements.push('🎨 Artist');
+  if(images>=10)achievements.push('🖼️ Gallery Owner');
+  if(analyticsData.voice>=1)achievements.push('🎤 Voice User');
+  if(analyticsData.searches>=1)achievements.push('🔍 Researcher');
+  if(tier==='lifetime')achievements.push('👑 Lifetime Member');
+  if(tier==='pro')achievements.push('🔥 Ultra Member');
+  if(achievements.length===0)achievements.push('🚀 Just Getting Started');
+  var achEl=document.getElementById('anal-achievements');
+  achEl.innerHTML='';
+  achievements.forEach(function(a){
+    var el=document.createElement('div');el.className='achievement';el.textContent=a;achEl.appendChild(el);
+  });
+}
+
+// Track voice and search usage
+var _origStartRecording=startRecording;
+startRecording=async function(){analyticsData.voice++;await _origStartRecording();};
+var _origDoSearch=doSearch;
+doSearch=async function(q){analyticsData.searches++;return await _origDoSearch(q);};
 
 // ── ADMIN PANEL ───────────────────────────────────────────────────────
 var ADMIN_SECRET='dementedvision2018';
