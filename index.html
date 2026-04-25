@@ -315,6 +315,21 @@ canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-
 .upgrade-checkout-btn:disabled{opacity:0.3;cursor:not-allowed;}
 .upgrade-cancel-btn{width:100%;padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(157,99,255,0.09);color:#3a1a5a;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.14s;}
 .upgrade-cancel-btn:hover{border-color:rgba(157,99,255,0.22);color:#6a3a8a;}
+/* Light mode */
+body.light-mode{background:#f0eeff !important;color:#1a0a2e !important;}
+body.light-mode .titlebar{background:rgba(240,238,255,0.98) !important;border-bottom-color:rgba(157,99,255,0.2) !important;}
+body.light-mode .sidebar{background:rgba(235,232,255,0.99) !important;border-right-color:rgba(157,99,255,0.15) !important;}
+body.light-mode .main-area{background:#f5f3ff !important;}
+body.light-mode .topbar{background:rgba(240,238,255,0.97) !important;border-bottom-color:rgba(157,99,255,0.15) !important;}
+body.light-mode .inp-area{background:rgba(240,238,255,0.98) !important;border-top-color:rgba(157,99,255,0.15) !important;}
+body.light-mode .textarea{background:rgba(157,99,255,0.06) !important;border-color:rgba(157,99,255,0.25) !important;color:#1a0a2e !important;}
+body.light-mode .msg.user .bub{background:rgba(157,99,255,0.15) !important;color:#1a0a2e !important;}
+body.light-mode .msg.ai .bub{background:rgba(255,255,255,0.95) !important;border-color:rgba(157,99,255,0.2) !important;color:#1a0a2e !important;}
+body.light-mode .history-panel{background:rgba(235,232,255,0.99) !important;}
+body.light-mode .chat-item{color:#3a1a5a !important;}
+body.light-mode .view{background:#f5f3ff !important;}
+body.light-mode .clr-btn{color:#4a2a7a !important;}
+body.light-mode canvas{opacity:0.3;}
 .code-copy-btn.run{background:rgba(0,255,100,0.1);color:#4ade80;border-color:rgba(0,255,100,0.3);}
 .code-copy-btn.run:hover{background:rgba(0,255,100,0.2);}
 .code-output{border-top:1px solid rgba(157,99,255,0.1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px;}
@@ -488,6 +503,7 @@ canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-
             <span class="char-count" id="charCount"></span>
             <button class="clr-btn" id="soundToggleBtn" onclick="toggleSound()">🔊 Sound ON</button>
             <button class="clr-btn" id="voiceOutputBtn" onclick="toggleVoiceOutput()">🔈 Voice OFF</button>
+            <button class="clr-btn" id="themeToggleBtn" onclick="toggleTheme()">☀️ Light</button>
             <button class="clr-btn" onclick="exportChat()" title="Export chat">Export</button>
             <button class="clr-btn" onclick="newChat()">New chat</button>
           </div>
@@ -1631,8 +1647,24 @@ async function adminLookup(){
   }catch(e){result.textContent='Failed: '+e.message;}
 }
 
-// ── SOUND EFFECTS ─────────────────────────────────────────────────────
-var soundEnabled=true;
+// ── THEME ─────────────────────────────────────────────────────────────
+var lightMode=false;
+
+function toggleTheme(){
+  lightMode=!lightMode;
+  document.body.classList.toggle('light-mode',lightMode);
+  var btn=document.getElementById('themeToggleBtn');
+  if(btn)btn.textContent=lightMode?'🌙 Dark':'☀️ Light';
+  localStorage.setItem('dai_theme',lightMode?'light':'dark');
+  showToast(lightMode?'Light mode on':'Dark mode on','');
+}
+
+function loadTheme(){
+  var saved=localStorage.getItem('dai_theme');
+  if(saved==='light'){lightMode=true;document.body.classList.add('light-mode');var btn=document.getElementById('themeToggleBtn');if(btn)btn.textContent='🌙 Dark';}
+}
+
+// ── SOUND EFFECTS ─────────────────────────────────────────────────────var soundEnabled=true;
 var audioCtx=null;
 
 function getAudioCtx(){
@@ -2018,6 +2050,7 @@ async function askAICode(){
 }
 
 checkSavedToken();
+loadTheme();
 </script>
 </body>
 </html>
