@@ -1440,7 +1440,45 @@ function getErrorMessage(error){
   return error;
 }
 
-// ── WEB SEARCH ────────────────────────────────────────────────────────
+// ── BROWSER/ELECTRON BRIDGE ──────────────────────────────────────────
+var API_BASE='https://demented-ai-backend-production.up.railway.app';
+
+// If not in Electron, create browser fallbacks
+if(!window.dai){
+  window.dai={
+    api:async function(opts){
+      try{
+        var headers={'Content-Type':'application/json'};
+        if(opts.token)headers['Authorization']='Bearer '+opts.token;
+        var res=await fetch(API_BASE+opts.path,{
+          method:opts.method||'GET',
+          headers:headers,
+          body:opts.body?JSON.stringify(opts.body):undefined
+        });
+        return await res.json();
+      }catch(e){return{error:e.message};}
+    },
+    get:async function(key){
+      try{return localStorage.getItem(key);}catch(e){return null;}
+    },
+    set:async function(key,val){
+      try{
+        if(val===null)localStorage.removeItem(key);
+        else localStorage.setItem(key,val);
+      }catch(e){}
+    },
+    minimize:function(){},
+    maximize:function(){},
+    close:function(){},
+    openUrl:function(url){window.open(url,'_blank');},
+    onUpdateAvailable:function(){},
+    onUpdateDownloaded:function(){},
+    installUpdate:function(){},
+    saveFile:async function(){return{ok:false};}
+  };
+}
+
+
 var webSearchEnabled=false;
 
 function toggleSearch(){
