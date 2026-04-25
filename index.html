@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <title>Demented AI</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -208,16 +210,26 @@ canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-
 .attach-btn:hover{background:rgba(157,99,255,0.15);border-color:rgba(157,99,255,0.28);}
 .textarea{flex:1;background:rgba(157,99,255,0.04);border:1px solid rgba(157,99,255,0.11);border-radius:12px;color:#e0d0ff;font-size:13px;font-family:'Inter',sans-serif;padding:10px 14px;resize:none;outline:none;min-height:42px;max-height:110px;line-height:1.55;transition:all 0.18s;}
 .textarea:focus{border-color:rgba(157,99,255,0.45);background:rgba(157,99,255,0.06);box-shadow:0 0 0 3px rgba(157,99,255,0.06);}
-.textarea::placeholder{color:#1a0830;}
+.textarea::placeholder{color:#4a3060;}
 .send-btn{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,rgba(157,99,255,0.7),rgba(100,40,200,0.7));border:1px solid rgba(157,99,255,0.35);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.16s;box-shadow:0 2px 10px rgba(157,99,255,0.14);}
 .send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(157,99,255,0.24);}
 .send-btn:disabled{opacity:0.2;cursor:not-allowed;transform:none;box-shadow:none;}
 .inp-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
-.inp-hint{font-size:10px;color:#1a0830;}
+.inp-hint{font-size:10px;color:#7a6a9a;}
 .inp-right{display:flex;align-items:center;gap:10px;}
-.char-count{font-size:10px;color:#2a1050;}
-.clr-btn{background:none;border:none;color:#2a1050;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:color 0.14s;}
+.char-count{font-size:10px;color:#6a5a8a;}
+.clr-btn{background:none;border:none;color:#7a6a9a;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;font-weight:500;transition:color 0.14s;}
 .clr-btn:hover{color:#9d63ff;}
+/* Folder tabs */
+.folder-tab{padding:3px 10px;border-radius:20px;border:1px solid rgba(157,99,255,0.15);background:transparent;color:#5a4a7a;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap;}
+.folder-tab:hover{background:rgba(157,99,255,0.1);color:#c084ff;}
+.folder-tab.active{background:rgba(157,99,255,0.18);border-color:rgba(157,99,255,0.4);color:#c084ff;}
+/* Context menu */
+.ctx-menu{position:fixed;z-index:9999;background:rgba(8,0,28,0.97);border:1px solid rgba(157,99,255,0.25);border-radius:10px;padding:6px;min-width:160px;box-shadow:0 8px 32px rgba(0,0,0,0.5);backdrop-filter:blur(10px);}
+.ctx-item{padding:8px 12px;font-size:12px;color:#c0b0e0;cursor:pointer;border-radius:6px;transition:background 0.1s;display:flex;align-items:center;gap:8px;}
+.ctx-item:hover{background:rgba(157,99,255,0.15);color:#fff;}
+.ctx-sep{height:1px;background:rgba(157,99,255,0.1);margin:4px 0;}
+.ctx-folder-label{padding:6px 12px;font-size:10px;color:#5a4a7a;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;}
 
 /* IMAGE VIEW */
 .img-wrap{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
@@ -1739,30 +1751,40 @@ function renderChatHistory(){
   var list=document.getElementById('histList');
   if(!list)return;
   list.innerHTML='';
-  var filtered=currentFolder==='all'?savedChats:savedChats.filter(function(c){return detectFolder(c.title)===currentFolder;});
+  var chats=chatHistoryList||savedChats||[];
+  var filtered=currentFolder==='all'?chats:chats.filter(function(c){
+    var f=getChatFolder(c.id)||detectFolder(c.title);
+    return f===currentFolder;
+  });
   if(filtered.length===0){
-    list.innerHTML='<div style="font-size:11px;color:#4a2a6a;text-align:center;padding:16px;">No chats in this folder</div>';
+    list.innerHTML='<div style="font-size:11px;color:#5a4a7a;text-align:center;padding:16px 10px;">'+
+      (currentFolder==='all'?'No chats yet. Start a conversation!':'No chats in this folder.<br><span style="font-size:10px;">Right-click any chat to move it here.</span>')+'</div>';
     return;
   }
   filtered.forEach(function(chat){
     var item=document.createElement('div');
     item.className='chat-item'+(chat.id===currentChatId?' active':'');
-    var folder=detectFolder(chat.title);
+    var folder=getChatFolder(chat.id)||detectFolder(chat.title);
     var folderColors={'2k':'#f59e0b','coding':'#60a5fa','fitness':'#34d399','music':'#f472b6','other':'#9d63ff'};
-    var folderColor=folderColors[folder]||'#9d63ff';
+    var folderColor=folderColors[folder]||'transparent';
+    var folderEmoji=FOLDER_EMOJI;
     item.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;width:100%;">'+
       '<div style="flex:1;overflow:hidden;">'+
         '<div class="chat-item-title" style="display:flex;align-items:center;gap:4px;">'+
+          (folder&&folder!=='other'?'<span style="font-size:11px;flex-shrink:0;">'+folderEmoji[folder]+'</span>':'')+
           '<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escHtml(chat.title||'New Chat')+'</span>'+
-          (currentFolder==='all'&&folder!=='other'?'<span style="font-size:8px;padding:1px 5px;border-radius:4px;background:'+folderColor+'22;color:'+folderColor+';flex-shrink:0;text-transform:uppercase;letter-spacing:0.05em;">'+folder+'</span>':'')+
         '</div>'+
-        '<div class="chat-item-date">'+formatDate(chat.updatedAt)+'</div>'+
+        '<div class="chat-item-date">'+formatDate(chat.updatedAt||chat.created_at)+'</div>'+
       '</div>'+
-      '<button onclick="deleteChat(\''+chat.id+'\',event)" style="background:none;border:none;color:#4a2a6a;cursor:pointer;padding:2px 4px;flex-shrink:0;font-size:12px;" title="Delete">✕</button>'+
+      '<button onclick="deleteChat(\''+chat.id+'\',event)" style="background:none;border:none;color:#4a2a6a;cursor:pointer;padding:2px 4px;flex-shrink:0;font-size:12px;opacity:0;" class="chat-del-btn" title="Delete">✕</button>'+
     '</div>';
     item.onclick=function(e){if(e.target.tagName!=='BUTTON')loadChat(chat.id);};
+    item.oncontextmenu=function(e){showContextMenu(e,chat.id);};
+    item.onmouseenter=function(){var btn=item.querySelector('.chat-del-btn');if(btn)btn.style.opacity='1';};
+    item.onmouseleave=function(){var btn=item.querySelector('.chat-del-btn');if(btn)btn.style.opacity='0';};
     list.appendChild(item);
   });
+  var cnt=document.getElementById('histCount');if(cnt)cnt.textContent=chats.length;
 }
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────
@@ -1876,6 +1898,59 @@ async function adminLookup(){
   }catch(e){result.textContent='Failed: '+e.message;}
 }
 
+// ── CHAT FOLDERS ─────────────────────────────────────────────────────
+var currentFolder='all';
+var FOLDERS={all:'All','2k':'2K 🏀',coding:'Coding 💻',fitness:'Fitness 💪',music:'Music 🎵',other:'Other 📁'};
+var FOLDER_EMOJI={'2k':'🏀',coding:'💻',fitness:'💪',music:'🎵',other:'📁'};
+
+function setFolder(folder,btn){
+  currentFolder=folder;
+  document.querySelectorAll('.folder-tab').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  renderChatHistory();
+}
+
+function getChatFolder(id){
+  return localStorage.getItem('dai_folder_'+id)||'';
+}
+
+function setChatFolder(id,folder){
+  localStorage.setItem('dai_folder_'+id,folder);
+  renderChatHistory();
+  showToast('Moved to '+FOLDERS[folder],'success');
+}
+
+function showContextMenu(e,chatId){
+  e.preventDefault();
+  e.stopPropagation();
+  // Remove existing
+  var old=document.getElementById('ctxMenu');
+  if(old)old.remove();
+  var menu=document.createElement('div');
+  menu.className='ctx-menu';menu.id='ctxMenu';
+  var currentF=getChatFolder(chatId);
+  menu.innerHTML='<div class="ctx-folder-label">MOVE TO FOLDER</div>'+
+    Object.keys(FOLDERS).filter(function(f){return f!=='all';}).map(function(f){
+      return '<div class="ctx-item" onclick="setChatFolder(\''+chatId+'\',\''+f+'\');document.getElementById(\'ctxMenu\').remove();">'+(currentF===f?'✓ ':'')+FOLDERS[f]+'</div>';
+    }).join('')+
+    '<div class="ctx-sep"></div>'+
+    '<div class="ctx-item" onclick="setChatFolder(\''+chatId+'\',\'\');document.getElementById(\'ctxMenu\').remove();">✕ Remove from folder</div>'+
+    '<div class="ctx-sep"></div>'+
+    '<div class="ctx-item" style="color:#f87171;" onclick="deleteChatItem(\''+chatId+'\');document.getElementById(\'ctxMenu\').remove();">🗑 Delete chat</div>';
+  menu.style.left=Math.min(e.clientX,window.innerWidth-180)+'px';
+  menu.style.top=Math.min(e.clientY,window.innerHeight-280)+'px';
+  document.body.appendChild(menu);
+  setTimeout(function(){document.addEventListener('click',function h(){menu.remove();document.removeEventListener('click',h);});},50);
+}
+
+function deleteChatItem(id){
+  var idx=chatHistoryList.findIndex(function(c){return c.id===id;});
+  if(idx>-1){chatHistoryList.splice(idx,1);saveChatHistory();}
+  if(currentChatId===id)newChat();
+  renderChatHistory();
+  showToast('Chat deleted','');
+}
+
 // ── THEME ─────────────────────────────────────────────────────────────
 var lightMode=false;
 
@@ -1893,7 +1968,8 @@ function loadTheme(){
   if(saved==='light'){lightMode=true;document.body.classList.add('light-mode');var btn=document.getElementById('themeToggleBtn');if(btn)btn.textContent='🌙 Dark';}
 }
 
-// ── SOUND EFFECTS ─────────────────────────────────────────────────────var soundEnabled=true;
+// ── SOUND EFFECTS ─────────────────────────────────────────────────────
+var soundEnabled=true;
 var audioCtx=null;
 
 function getAudioCtx(){
