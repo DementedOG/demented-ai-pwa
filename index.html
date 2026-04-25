@@ -330,6 +330,15 @@ body.light-mode .chat-item{color:#3a1a5a !important;}
 body.light-mode .view{background:#f5f3ff !important;}
 body.light-mode .clr-btn{color:#4a2a7a !important;}
 body.light-mode canvas{opacity:0.3;}
+/* Rainbow text animation */
+@keyframes rainbow{0%{color:#c084ff}20%{color:#00ffcc}40%{color:#60a5fa}60%{color:#fb923c}80%{color:#f472b6}100%{color:#c084ff}}
+.rainbow-text{animation:rainbow 4s linear infinite;}
+/* Fix dark text colors globally */
+.inp-hint{color:#7a6a9a !important;}
+.chat-item-date{color:#5a4a7a !important;}
+.view-info{color:#7a6a9a !important;}
+.s-row-label{color:#9a8aaa !important;}
+.achievement{color:#c0b0e0 !important;border-color:rgba(157,99,255,0.25) !important;background:rgba(157,99,255,0.08) !important;padding:8px 14px !important;font-size:12px !important;}
 .code-copy-btn.run{background:rgba(0,255,100,0.1);color:#4ade80;border-color:rgba(0,255,100,0.3);}
 .code-copy-btn.run:hover{background:rgba(0,255,100,0.2);}
 .code-output{border-top:1px solid rgba(157,99,255,0.1);background:rgba(0,0,0,0.3);border-radius:0 0 8px 8px;}
@@ -617,90 +626,116 @@ body.light-mode canvas{opacity:0.3;}
 </div>
 
   <!-- ANALYTICS VIEW -->
-  <div class="view" id="view-analytics">
-    <div style="padding:20px;max-width:700px;margin:0 auto;height:100%;overflow-y:auto;">
-      <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;letter-spacing:0.1em;margin-bottom:4px;">📊 YOUR STATS</div>
-      <div style="font-size:11px;color:#4a2a6a;margin-bottom:20px;">Track your Demented AI usage</div>
-
-      <!-- Stat cards -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;" id="statCards">
-        <div class="stat-card"><div class="stat-icon">💬</div><div class="stat-val" id="stat-chats">—</div><div class="stat-label">Messages Sent</div></div>
-        <div class="stat-card"><div class="stat-icon">🎨</div><div class="stat-val" id="stat-images">—</div><div class="stat-label">Images Generated</div></div>
-        <div class="stat-card"><div class="stat-icon">🎤</div><div class="stat-val" id="stat-voice">—</div><div class="stat-label">Voice Inputs</div></div>
-        <div class="stat-card"><div class="stat-icon">🔍</div><div class="stat-val" id="stat-searches">—</div><div class="stat-label">Web Searches</div></div>
+  <div class="view" id="view-analytics" style="overflow-y:auto;">
+    <div style="padding:28px 32px;width:100%;box-sizing:border-box;">
+      <!-- Header -->
+      <div style="margin-bottom:28px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:0.12em;margin-bottom:6px;" class="rainbow-text">📊 YOUR STATS</div>
+        <div style="font-size:12px;color:#7a6a9a;">Track your Demented AI usage and achievements</div>
       </div>
 
-      <!-- Plan usage -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Plan Usage This Month</div>
-        <div style="margin-bottom:10px;">
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#7a7a9a;margin-bottom:4px;"><span>Images</span><span id="anal-img-count">—</span></div>
-          <div style="height:6px;background:rgba(157,99,255,0.1);border-radius:3px;overflow:hidden;"><div id="anal-img-bar" style="height:100%;background:linear-gradient(90deg,#9d63ff,#c084ff);border-radius:3px;width:0%;transition:width 0.5s;"></div></div>
+      <!-- Big stat cards -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+        <div style="background:linear-gradient(135deg,rgba(157,99,255,0.12),rgba(100,40,200,0.08));border:1px solid rgba(157,99,255,0.25);border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;font-size:60px;opacity:0.05;">💬</div>
+          <div style="font-size:32px;margin-bottom:8px;">💬</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#c084ff;margin-bottom:4px;" id="stat-chats">—</div>
+          <div style="font-size:11px;color:#6a5a8a;text-transform:uppercase;letter-spacing:0.08em;">Messages Sent</div>
         </div>
-        <div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#7a7a9a;margin-bottom:4px;"><span>Messages</span><span id="anal-chat-count">—</span></div>
-          <div style="height:6px;background:rgba(157,99,255,0.1);border-radius:3px;overflow:hidden;"><div id="anal-chat-bar" style="height:100%;background:linear-gradient(90deg,#00ffcc,#00c9a7);border-radius:3px;width:0%;transition:width 0.5s;"></div></div>
+        <div style="background:linear-gradient(135deg,rgba(0,255,204,0.08),rgba(0,150,120,0.06));border:1px solid rgba(0,255,204,0.2);border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;font-size:60px;opacity:0.05;">🎨</div>
+          <div style="font-size:32px;margin-bottom:8px;">🎨</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#00ffcc;margin-bottom:4px;" id="stat-images">—</div>
+          <div style="font-size:11px;color:#6a5a8a;text-transform:uppercase;letter-spacing:0.08em;">Images Generated</div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(251,146,60,0.08),rgba(200,80,0,0.06));border:1px solid rgba(251,146,60,0.2);border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;font-size:60px;opacity:0.05;">🎤</div>
+          <div style="font-size:32px;margin-bottom:8px;">🎤</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#fb923c;margin-bottom:4px;" id="stat-voice">—</div>
+          <div style="font-size:11px;color:#6a5a8a;text-transform:uppercase;letter-spacing:0.08em;">Voice Inputs</div>
+        </div>
+        <div style="background:linear-gradient(135deg,rgba(96,165,250,0.08),rgba(30,80,200,0.06));border:1px solid rgba(96,165,250,0.2);border-radius:16px;padding:24px;text-align:center;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;font-size:60px;opacity:0.05;">🔍</div>
+          <div style="font-size:32px;margin-bottom:8px;">🔍</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:28px;font-weight:900;color:#60a5fa;margin-bottom:4px;" id="stat-searches">—</div>
+          <div style="font-size:11px;color:#6a5a8a;text-transform:uppercase;letter-spacing:0.08em;">Web Searches</div>
         </div>
       </div>
 
-      <!-- Plan info -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Current Plan</div>
-        <div id="anal-plan-info" style="font-size:13px;color:#9a8aaa;line-height:1.8;"></div>
-        <button onclick="showUpgradeModal()" style="margin-top:12px;padding:8px 16px;border-radius:8px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">UPGRADE PLAN</button>
+      <!-- Usage bars + Plan info -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+        <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:16px;padding:20px;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:#c084ff;margin-bottom:16px;letter-spacing:0.08em;">PLAN USAGE THIS MONTH</div>
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:#9a8aaa;">Images</span><span style="color:#e0d0ff;font-weight:600;" id="anal-img-count">—</span></div>
+            <div style="height:8px;background:rgba(157,99,255,0.1);border-radius:4px;overflow:hidden;"><div id="anal-img-bar" style="height:100%;background:linear-gradient(90deg,#9d63ff,#c084ff);border-radius:4px;width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span style="color:#9a8aaa;">Messages</span><span style="color:#e0d0ff;font-weight:600;" id="anal-chat-count">—</span></div>
+            <div style="height:8px;background:rgba(0,255,204,0.08);border-radius:4px;overflow:hidden;"><div id="anal-chat-bar" style="height:100%;background:linear-gradient(90deg,#00ffcc,#00c9a7);border-radius:4px;width:0%;transition:width 0.8s cubic-bezier(0.4,0,0.2,1);"></div></div>
+          </div>
+        </div>
+        <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:16px;padding:20px;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:#c084ff;margin-bottom:16px;letter-spacing:0.08em;">CURRENT PLAN</div>
+          <div id="anal-plan-info" style="font-size:13px;color:#c0b0e0;line-height:2;"></div>
+          <button onclick="showUpgradeModal()" style="margin-top:12px;padding:10px 20px;border-radius:10px;background:linear-gradient(135deg,rgba(157,99,255,0.25),rgba(100,40,200,0.2));border:1px solid rgba(157,99,255,0.4);color:#c084ff;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">⚡ UPGRADE PLAN</button>
+        </div>
       </div>
 
       <!-- Achievements -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:11px;color:#c084ff;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Achievements</div>
-        <div id="anal-achievements" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:16px;padding:20px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:#c084ff;margin-bottom:16px;letter-spacing:0.08em;">🏆 ACHIEVEMENTS</div>
+        <div id="anal-achievements" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
       </div>
     </div>
   </div>
 
   <!-- ADMIN VIEW -->
-  <div class="view" id="view-admin">
-    <div style="padding:20px;max-width:700px;margin:0 auto;height:100%;overflow-y:auto;">
-      <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#f59e0b;letter-spacing:0.1em;margin-bottom:4px;">⚡ ADMIN PANEL</div>
-      <div style="font-size:11px;color:#4a2a6a;margin-bottom:20px;">Manage users and subscriptions</div>
+  <div class="view" id="view-admin" style="overflow-y:auto;">
+    <div style="padding:28px 32px;width:100%;box-sizing:border-box;">
+      <!-- Header -->
+      <div style="margin-bottom:28px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:0.12em;color:#f59e0b;margin-bottom:6px;">⚡ ADMIN PANEL</div>
+        <div style="font-size:12px;color:#7a6a9a;">Manage users and subscriptions — DementedOG only</div>
+      </div>
 
-      <!-- Grant Tier -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.2);border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#f59e0b;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Grant / Change Tier</div>
-        <div style="display:flex;gap:8px;margin-bottom:8px;">
-          <input id="adminEmail" placeholder="User email" style="flex:1;background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.2);border-radius:8px;color:#e0d0ff;font-size:12px;padding:9px 12px;outline:none;font-family:'Inter',sans-serif;">
-          <select id="adminTier" style="background:rgba(8,0,28,0.9);border:1px solid rgba(245,158,11,0.2);border-radius:8px;color:#e0d0ff;font-size:12px;padding:9px 12px;outline:none;font-family:'Inter',sans-serif;">
+      <!-- Grant tier -->
+      <div style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(180,100,0,0.05));border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:24px;margin-bottom:20px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">GRANT / CHANGE TIER</div>
+        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+          <input id="adminEmail" placeholder="User email address" style="flex:1;min-width:200px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.25);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
+          <select id="adminTier" style="background:rgba(8,0,28,0.9);border:1px solid rgba(245,158,11,0.25);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
             <option value="free">Free</option>
-            <option value="basic">Basic ($9.99)</option>
-            <option value="standard">Standard ($19.99)</option>
-            <option value="pro">Pro ($34.99)</option>
-            <option value="lifetime">Lifetime</option>
+            <option value="basic">Basic — $9.99/mo</option>
+            <option value="standard">Standard — $19.99/mo</option>
+            <option value="pro">Pro — $34.99/mo</option>
+            <option value="lifetime">Lifetime — $149</option>
           </select>
-          <button onclick="adminGrantTier()" style="padding:0 16px;border-radius:8px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;white-space:nowrap;">GRANT</button>
+          <button onclick="adminGrantTier()" style="padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(180,100,0,0.2));border:1px solid rgba(245,158,11,0.5);color:#f59e0b;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:0.06em;">GRANT ⚡</button>
         </div>
-        <div id="adminMsg" style="font-size:12px;color:#34d399;min-height:18px;"></div>
+        <div id="adminMsg" style="font-size:12px;color:#34d399;min-height:20px;padding:4px 0;"></div>
       </div>
 
-      <!-- Quick Grant Buttons -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#f59e0b;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">Quick Grant to Email Above</div>
-        <div style="display:flex;flex-wrap:wrap;gap:8px;">
-          <button onclick="adminQuickGrant('free')" style="padding:8px 14px;border-radius:8px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.3);color:#9a9aaa;font-size:11px;cursor:pointer;">Free</button>
-          <button onclick="adminQuickGrant('basic')" style="padding:8px 14px;border-radius:8px;background:rgba(157,99,255,0.1);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;">Basic</button>
-          <button onclick="adminQuickGrant('standard')" style="padding:8px 14px;border-radius:8px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;font-size:11px;cursor:pointer;">Standard</button>
-          <button onclick="adminQuickGrant('pro')" style="padding:8px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:11px;cursor:pointer;">Pro 🔥</button>
-          <button onclick="adminQuickGrant('lifetime')" style="padding:8px 14px;border-radius:8px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:11px;cursor:pointer;">Lifetime ⚡</button>
+      <!-- Quick grant -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:24px;margin-bottom:20px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">QUICK GRANT TO EMAIL ABOVE</div>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;">
+          <button onclick="adminQuickGrant('free')" style="padding:10px 20px;border-radius:10px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.3);color:#9a9aaa;font-size:12px;cursor:pointer;font-weight:600;">Free</button>
+          <button onclick="adminQuickGrant('basic')" style="padding:10px 20px;border-radius:10px;background:rgba(157,99,255,0.12);border:1px solid rgba(157,99,255,0.35);color:#c084ff;font-size:12px;cursor:pointer;font-weight:600;">Basic</button>
+          <button onclick="adminQuickGrant('standard')" style="padding:10px 20px;border-radius:10px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);color:#60a5fa;font-size:12px;cursor:pointer;font-weight:600;">Standard</button>
+          <button onclick="adminQuickGrant('pro')" style="padding:10px 20px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;font-size:12px;cursor:pointer;font-weight:600;">Pro 🔥</button>
+          <button onclick="adminQuickGrant('lifetime')" style="padding:10px 20px;border-radius:10px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);color:#34d399;font-size:12px;cursor:pointer;font-weight:600;">Lifetime ⚡</button>
         </div>
       </div>
 
-      <!-- User Lookup -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:16px;">
-        <div style="font-size:11px;color:#f59e0b;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.08em;">User Info</div>
-        <div style="display:flex;gap:8px;margin-bottom:12px;">
-          <input id="adminLookupEmail" placeholder="Email to look up" style="flex:1;background:rgba(245,158,11,0.04);border:1px solid rgba(245,158,11,0.2);border-radius:8px;color:#e0d0ff;font-size:12px;padding:9px 12px;outline:none;font-family:'Inter',sans-serif;">
-          <button onclick="adminLookup()" style="padding:0 16px;border-radius:8px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">LOOKUP</button>
+      <!-- User lookup -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:24px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">USER LOOKUP</div>
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <input id="adminLookupEmail" placeholder="Enter email to look up" style="flex:1;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
+          <button onclick="adminLookup()" style="padding:12px 24px;border-radius:10px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">LOOKUP</button>
         </div>
-        <div id="adminLookupResult" style="font-size:12px;color:#9a8aaa;min-height:20px;"></div>
+        <div id="adminLookupResult" style="font-size:13px;color:#9a8aaa;"></div>
       </div>
     </div>
   </div>
@@ -709,11 +744,11 @@ body.light-mode canvas{opacity:0.3;}
   <div class="view" id="view-memory">
     <div style="padding:20px;max-width:700px;margin:0 auto;height:100%;display:flex;flex-direction:column;">
       <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;letter-spacing:0.1em;margin-bottom:4px;">🧠 MEMORY SYSTEM</div>
-      <div style="font-size:11px;color:#4a2a6a;margin-bottom:20px;">Save things you want the AI to always remember about you</div>
+      <div style="font-size:11px;color:#7a6a9a;margin-bottom:20px;">Save things you want the AI to always remember about you</div>
 
       <!-- Add Memory -->
       <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(157,99,255,0.15);border-radius:12px;padding:16px;margin-bottom:16px;">
-        <div style="font-size:11px;color:#7a7a9a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Add Memory</div>
+        <div style="font-size:11px;color:#9a8aaa;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Add Memory</div>
         <div style="display:flex;gap:8px;margin-bottom:8px;">
           <input id="memKeyInp" placeholder="Key (e.g. 2k_build, coding_stack, fitness_goal)" style="flex:1;background:rgba(157,99,255,0.04);border:1px solid rgba(157,99,255,0.14);border-radius:8px;color:#e0d0ff;font-size:12px;padding:9px 12px;outline:none;font-family:'Inter',sans-serif;">
         </div>
@@ -725,7 +760,7 @@ body.light-mode canvas{opacity:0.3;}
 
       <!-- Quick Presets -->
       <div style="margin-bottom:16px;">
-        <div style="font-size:11px;color:#4a2a6a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Quick Presets</div>
+        <div style="font-size:11px;color:#7a6a9a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Quick Presets</div>
         <div style="display:flex;flex-wrap:wrap;gap:6px;">
           <button onclick="setMemPreset('2k_build','My 2K build')" class="mem-preset">2K Build</button>
           <button onclick="setMemPreset('coding_stack','My coding stack')" class="mem-preset">Coding Stack</button>
@@ -739,7 +774,7 @@ body.light-mode canvas{opacity:0.3;}
 
       <!-- Saved Memories -->
       <div style="flex:1;overflow-y:auto;">
-        <div style="font-size:11px;color:#4a2a6a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Saved Memories</div>
+        <div style="font-size:11px;color:#7a6a9a;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;">Saved Memories</div>
         <div id="memoryList" style="display:flex;flex-direction:column;gap:8px;">
           <div style="font-size:12px;color:#3a1a5a;text-align:center;padding:20px;">Loading memories...</div>
         </div>
