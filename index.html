@@ -351,6 +351,24 @@ body.light-mode canvas{opacity:0.3;}
 .view-info{color:#7a6a9a !important;}
 .s-row-label{color:#9a8aaa !important;}
 .achievement{color:#c0b0e0 !important;border-color:rgba(157,99,255,0.25) !important;background:rgba(157,99,255,0.08) !important;padding:8px 14px !important;font-size:12px !important;}
+.playstyle-btn{padding:10px 8px;border-radius:10px;border:1px solid rgba(245,158,11,0.2);background:rgba(8,0,28,0.5);color:#7a6a9a;font-size:11px;cursor:pointer;font-weight:600;transition:all 0.15s;font-family:'Inter',sans-serif;}
+.playstyle-btn:hover{border-color:rgba(245,158,11,0.4);color:#f59e0b;background:rgba(245,158,11,0.08);}
+.playstyle-btn.active{border-color:rgba(245,158,11,0.6);color:#f59e0b;background:rgba(245,158,11,0.15);}
+.cap-row{background:rgba(8,0,28,0.4);border:1px solid rgba(157,99,255,0.1);border-radius:8px;padding:10px 12px;}
+.cap-name{font-size:11px;color:#9a8aaa;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.05em;}
+.cap-bar-wrap{height:6px;background:rgba(157,99,255,0.1);border-radius:3px;overflow:hidden;margin-bottom:4px;}
+.cap-bar{height:100%;border-radius:3px;transition:width 0.5s cubic-bezier(0.4,0,0.2,1);}
+.cap-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:700;}
+.badge-row{background:rgba(8,0,28,0.4);border:1px solid rgba(157,99,255,0.1);border-radius:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;}
+.badge-name{font-size:13px;color:#e0d0ff;font-weight:600;}
+.badge-tier{font-size:11px;padding:3px 10px;border-radius:12px;font-weight:700;font-family:'Orbitron',sans-serif;letter-spacing:0.05em;}
+.badge-tier.legend{background:rgba(220,38,38,0.2);color:#ef4444;border:1px solid rgba(220,38,38,0.5);animation:legendPulse 2s infinite;}
+@keyframes legendPulse{0%,100%{box-shadow:0 0 4px rgba(220,38,38,0.3)}50%{box-shadow:0 0 12px rgba(220,38,38,0.6);}}
+.badge-tier.hof{background:rgba(157,99,255,0.2);color:#c084ff;border:1px solid rgba(157,99,255,0.4);}
+.badge-tier.gold{background:rgba(234,179,8,0.15);color:#eab308;border:1px solid rgba(234,179,8,0.3);}
+.badge-tier.silver{background:rgba(148,163,184,0.15);color:#94a3b8;border:1px solid rgba(148,163,184,0.3);}
+.badge-tier.bronze{background:rgba(180,83,9,0.15);color:#b45309;border:1px solid rgba(180,83,9,0.3);}
+.badge-desc{font-size:11px;color:#6a5a8a;margin-top:2px;}
 .folder-tab{padding:3px 10px;border-radius:20px;border:1px solid rgba(157,99,255,0.15);background:transparent;color:#6a5a8a;font-size:10px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;white-space:nowrap;}
 .folder-tab:hover{background:rgba(157,99,255,0.1);color:#c084ff;}
 .folder-tab.active{background:rgba(157,99,255,0.18);border-color:rgba(157,99,255,0.4);color:#c084ff;}
@@ -446,6 +464,10 @@ body.light-mode canvas{opacity:0.3;}
     <div class="sb-btn" id="nav-analytics" onclick="setView('analytics',this);loadAnalytics()">
       <svg viewBox="0 0 17 17" fill="none"><rect x="2" y="10" width="3" height="5" rx="1" fill="#c084ff"/><rect x="7" y="6" width="3" height="9" rx="1" fill="#c084ff"/><rect x="12" y="2" width="3" height="13" rx="1" fill="#c084ff"/></svg>
       <div class="sb-tip">Stats</div>
+    </div>
+    <div class="sb-btn" id="nav-2k" onclick="setView('2k',this)">
+      <svg viewBox="0 0 17 17" fill="none"><circle cx="8.5" cy="8.5" r="6" stroke="#f59e0b" stroke-width="1.3"/><path d="M6 6.5l2.5 2-2.5 2M10 11h1.5" stroke="#f59e0b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="sb-tip">2K Builder</div>
     </div>
     <div class="sb-div"></div>
     <div class="sb-bottom">
@@ -644,6 +666,93 @@ body.light-mode canvas{opacity:0.3;}
           <div class="s-row"><span class="s-row-label">Version</span><span class="s-row-value">Demented AI v1.2.0</span></div>
           <div class="s-row"><span class="s-row-label">Built by</span><span class="s-row-value" style="color:#9d63ff;font-weight:600;">DementedOG</span></div>
           <div class="s-row" style="border-bottom:none;"><span class="s-row-label">Status</span><span class="s-row-value" style="color:#34d399;">● All systems online</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2K BUILD CALCULATOR -->
+  <div class="view" id="view-2k">
+    <div class="cust-wrap">
+      <!-- Header -->
+      <div style="text-align:center;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:#f59e0b;letter-spacing:0.12em;margin-bottom:4px;">🏀 2K26 BUILD CALCULATOR</div>
+        <div style="font-size:11px;color:#7a6a9a;">Build your MyPLAYER with accurate 2K26 attribute caps</div>
+      </div>
+
+      <!-- Step 1: Position + Physical -->
+      <div class="s-card" style="border-color:rgba(245,158,11,0.2);">
+        <div class="s-title" style="color:#f59e0b;"><span class="s-title-icon">1️⃣</span> Position & Body</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <div style="font-size:11px;color:#9a8aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Position</div>
+            <select id="bld-pos" onchange="updateBuild()" style="width:100%;background:rgba(8,0,28,0.8);border:1px solid rgba(245,158,11,0.25);border-radius:8px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;">
+              <option value="PG">Point Guard (PG)</option>
+              <option value="SG">Shooting Guard (SG)</option>
+              <option value="SF">Small Forward (SF)</option>
+              <option value="PF">Power Forward (PF)</option>
+              <option value="C">Center (C)</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9a8aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Height</div>
+            <select id="bld-height" onchange="updateBuild()" style="width:100%;background:rgba(8,0,28,0.8);border:1px solid rgba(245,158,11,0.25);border-radius:8px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;">
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9a8aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Weight</div>
+            <select id="bld-weight" onchange="updateBuild()" style="width:100%;background:rgba(8,0,28,0.8);border:1px solid rgba(245,158,11,0.25);border-radius:8px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;">
+              <option value="150">150 lbs</option><option value="160">160 lbs</option><option value="170">170 lbs</option>
+              <option value="180">180 lbs</option><option value="190">190 lbs</option><option value="200">200 lbs</option>
+              <option value="210">210 lbs</option><option value="220">220 lbs</option><option value="230">230 lbs</option>
+              <option value="240">240 lbs</option><option value="250">250 lbs</option><option value="260">260 lbs</option>
+              <option value="270">270 lbs</option><option value="280">280 lbs</option><option value="290">290 lbs</option>
+              <option value="300">300 lbs</option>
+            </select>
+          </div>
+          <div>
+            <div style="font-size:11px;color:#9a8aaa;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Wingspan</div>
+            <select id="bld-wing" onchange="updateBuild()" style="width:100%;background:rgba(8,0,28,0.8);border:1px solid rgba(245,158,11,0.25);border-radius:8px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;">
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Playstyle -->
+      <div class="s-card" style="border-color:rgba(245,158,11,0.2);">
+        <div class="s-title" style="color:#f59e0b;"><span class="s-title-icon">2️⃣</span> Playstyle</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;" id="playstyle-btns">
+          <button class="playstyle-btn active" data-style="sharp" onclick="setPlaystyle(this)">🎯 Sharp</button>
+          <button class="playstyle-btn" data-style="slasher" onclick="setPlaystyle(this)">⚡ Slasher</button>
+          <button class="playstyle-btn" data-style="playmaker" onclick="setPlaystyle(this)">👁 Playmaker</button>
+          <button class="playstyle-btn" data-style="defender" onclick="setPlaystyle(this)">🛡 Defender</button>
+          <button class="playstyle-btn" data-style="rebounder" onclick="setPlaystyle(this)">💪 Rebounder</button>
+          <button class="playstyle-btn" data-style="all-around" onclick="setPlaystyle(this)">⭐ All-Around</button>
+        </div>
+      </div>
+
+      <!-- Attribute Caps Display -->
+      <div class="s-card" style="border-color:rgba(245,158,11,0.2);">
+        <div class="s-title" style="color:#f59e0b;"><span class="s-title-icon">📊</span> Attribute Caps</div>
+        <div id="bld-caps" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        </div>
+      </div>
+
+      <!-- Recommended Badges -->
+      <div class="s-card" style="border-color:rgba(245,158,11,0.2);">
+        <div class="s-title" style="color:#f59e0b;"><span class="s-title-icon">🏅</span> Recommended Badges</div>
+        <div id="bld-badges" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- AI Build Analysis -->
+      <div class="s-card" style="border-color:rgba(245,158,11,0.2);">
+        <div class="s-title" style="color:#f59e0b;"><span class="s-title-icon">🤖</span> AI Build Analysis</div>
+        <div id="bld-ai-output" style="font-size:13px;color:#9a8aaa;line-height:1.7;min-height:60px;">Click "Analyze Build" to get personalized AI advice for your build.</div>
+        <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
+          <button onclick="analyzeBuild()" style="padding:10px 20px;border-radius:10px;background:linear-gradient(135deg,rgba(245,158,11,0.25),rgba(180,100,0,0.2));border:1px solid rgba(245,158,11,0.4);color:#f59e0b;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">🤖 ANALYZE BUILD</button>
+          <button onclick="saveBuildToMemory()" style="padding:10px 20px;border-radius:10px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">🧠 SAVE TO MEMORY</button>
+          <button onclick="shareBuild()" style="padding:10px 20px;border-radius:10px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">🔗 SHARE BUILD</button>
+          <button onclick="askAIBuild()" style="padding:10px 20px;border-radius:10px;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.3);color:#60a5fa;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">💬 ASK AI</button>
         </div>
       </div>
     </div>
@@ -1024,7 +1133,7 @@ async function changePw(){
 }
 
 // NAV
-var VIEWS={chat:['CHAT','Ask anything'],image:['IMAGE GENERATOR','Create with AI'],code:['CODE EDITOR','Write · Run · Ask AI'],customize:['SETTINGS','Account & Preferences'],memory:['MEMORY','What the AI remembers about you'],analytics:['YOUR STATS','Track your usage'],admin:['ADMIN PANEL','Manage users']};
+var VIEWS={chat:['CHAT','Ask anything'],image:['IMAGE GENERATOR','Create with AI'],code:['CODE EDITOR','Write · Run · Ask AI'],customize:['SETTINGS','Account & Preferences'],memory:['MEMORY','What the AI remembers about you'],analytics:['YOUR STATS','Track your usage'],admin:['ADMIN PANEL','Manage users'],'2k':['2K26 BUILD CALCULATOR','Build your MyPLAYER']};
 function setView(name,btn){
   document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});if(btn)btn.classList.add('active');
   document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
@@ -1033,6 +1142,7 @@ function setView(name,btn){
   var hp=document.getElementById('historyPanel'),htb=document.getElementById('histToggleBtn');
   if(name==='chat'){hp.style.display='flex';if(htb)htb.style.display='block';}else{hp.style.display='none';if(htb)htb.style.display='none';}
   if(name==='customize'){updateUserUI();updateHistCount();}
+  if(name==='2k'){setTimeout(function(){initBuildCalculator();},50);}
 }
 
 function toggleHistory(){
@@ -1785,6 +1895,318 @@ function renderChatHistory(){
     list.appendChild(item);
   });
   var cnt=document.getElementById('histCount');if(cnt)cnt.textContent=chats.length;
+}
+
+// ── 2K26 BUILD CALCULATOR ─────────────────────────────────────────────
+var currentPlaystyle='sharp';
+var currentBuildData={};
+
+// 2K26 Position height ranges
+var POS_HEIGHTS={
+  PG:['5\'7"','5\'8"','5\'9"','5\'10"','5\'11"','6\'0"','6\'1"','6\'2"','6\'3"','6\'4"'],
+  SG:['6\'0"','6\'1"','6\'2"','6\'3"','6\'4"','6\'5"','6\'6"','6\'7"'],
+  SF:['6\'3"','6\'4"','6\'5"','6\'6"','6\'7"','6\'8"'],
+  PF:['6\'6"','6\'7"','6\'8"','6\'9"','6\'10"','6\'11"','7\'0"'],
+  C:['6\'9"','6\'10"','6\'11"','7\'0"','7\'1"','7\'2"','7\'3"','7\'4"']
+};
+
+// 2K26 Base attribute caps by position + height (accurate to 2K26)
+// Format: [Finishing, Shooting, Playmaking, Defense, Rebounding, Physicals(Speed/Accel/Strength/Vert/Stamina)]
+var CAPS_DATA={
+  PG:{
+    '5\'7"':  {closing:90,drivingLayup:92,drivingDunk:80,standingDunk:30,postControl:45,midRange:92,threePoint:94,freeThrow:88,postFade:75,offBall:82,passAccuracy:94,ballHandle:97,speedWithBall:95,interiorDef:50,perimDef:90,steal:90,block:50,helpDefIQ:80,passPerception:80,offReb:40,defReb:55,speed:95,accel:95,strength:55,vert:87,stamina:90},
+    '6\'0"':  {closing:88,drivingLayup:90,drivingDunk:82,standingDunk:35,postControl:50,midRange:90,threePoint:92,freeThrow:86,postFade:72,offBall:82,passAccuracy:93,ballHandle:95,speedWithBall:93,interiorDef:52,perimDef:88,steal:88,block:52,helpDefIQ:80,passPerception:80,offReb:42,defReb:57,speed:92,accel:92,strength:58,vert:85,stamina:90},
+    '6\'3"':  {closing:86,drivingLayup:88,drivingDunk:84,standingDunk:40,postControl:55,midRange:88,threePoint:90,freeThrow:85,postFade:70,offBall:82,passAccuracy:92,ballHandle:93,speedWithBall:90,interiorDef:55,perimDef:86,steal:86,block:55,helpDefIQ:80,passPerception:80,offReb:45,defReb:60,speed:88,accel:88,strength:62,vert:83,stamina:90},
+    '6\'4"':  {closing:85,drivingLayup:87,drivingDunk:85,standingDunk:42,postControl:58,midRange:87,threePoint:88,freeThrow:84,postFade:68,offBall:81,passAccuracy:91,ballHandle:91,speedWithBall:88,interiorDef:57,perimDef:85,steal:85,block:57,helpDefIQ:79,passPerception:79,offReb:47,defReb:62,speed:86,accel:86,strength:65,vert:82,stamina:90},
+  },
+  SG:{
+    '6\'2"':  {closing:87,drivingLayup:90,drivingDunk:82,standingDunk:38,postControl:52,midRange:92,threePoint:93,freeThrow:87,postFade:76,offBall:88,passAccuracy:88,ballHandle:91,speedWithBall:90,interiorDef:52,perimDef:88,steal:86,block:52,helpDefIQ:78,passPerception:78,offReb:42,defReb:57,speed:90,accel:90,strength:58,vert:84,stamina:90},
+    '6\'4"':  {closing:86,drivingLayup:89,drivingDunk:84,standingDunk:42,postControl:56,midRange:91,threePoint:92,freeThrow:86,postFade:74,offBall:87,passAccuracy:87,ballHandle:89,speedWithBall:88,interiorDef:54,perimDef:87,steal:85,block:54,helpDefIQ:77,passPerception:77,offReb:44,defReb:59,speed:88,accel:88,strength:62,vert:83,stamina:90},
+    '6\'6"':  {closing:85,drivingLayup:88,drivingDunk:86,standingDunk:46,postControl:60,midRange:90,threePoint:90,freeThrow:85,postFade:72,offBall:86,passAccuracy:86,ballHandle:87,speedWithBall:86,interiorDef:58,perimDef:86,steal:84,block:58,helpDefIQ:76,passPerception:76,offReb:47,defReb:62,speed:86,accel:86,strength:66,vert:82,stamina:90},
+    '6\'7"':  {closing:84,drivingLayup:87,drivingDunk:87,standingDunk:48,postControl:62,midRange:89,threePoint:88,freeThrow:84,postFade:70,offBall:85,passAccuracy:85,ballHandle:85,speedWithBall:84,interiorDef:60,perimDef:85,steal:83,block:60,helpDefIQ:75,passPerception:75,offReb:49,defReb:64,speed:84,accel:84,strength:68,vert:81,stamina:90},
+  },
+  SF:{
+    '6\'5"':  {closing:86,drivingLayup:88,drivingDunk:88,standingDunk:50,postControl:64,midRange:90,threePoint:90,freeThrow:84,postFade:72,offBall:84,passAccuracy:84,ballHandle:85,speedWithBall:84,interiorDef:60,perimDef:86,steal:84,block:60,helpDefIQ:75,passPerception:75,offReb:52,defReb:67,speed:85,accel:85,strength:70,vert:82,stamina:90},
+    '6\'7"':  {closing:85,drivingLayup:87,drivingDunk:89,standingDunk:54,postControl:68,midRange:88,threePoint:88,freeThrow:83,postFade:70,offBall:83,passAccuracy:83,ballHandle:83,speedWithBall:82,interiorDef:64,perimDef:85,steal:83,block:64,helpDefIQ:74,passPerception:74,offReb:55,defReb:70,speed:83,accel:83,strength:74,vert:81,stamina:90},
+    '6\'8"':  {closing:84,drivingLayup:86,drivingDunk:90,standingDunk:56,postControl:70,midRange:87,threePoint:86,freeThrow:82,postFade:68,offBall:82,passAccuracy:82,ballHandle:81,speedWithBall:80,interiorDef:67,perimDef:84,steal:82,block:67,helpDefIQ:73,passPerception:73,offReb:58,defReb:73,speed:81,accel:81,strength:77,vert:80,stamina:90},
+  },
+  PF:{
+    '6\'8"':  {closing:84,drivingLayup:86,drivingDunk:90,standingDunk:60,postControl:76,midRange:86,threePoint:84,freeThrow:80,postFade:72,offBall:78,passAccuracy:80,ballHandle:78,speedWithBall:78,interiorDef:74,perimDef:82,steal:78,block:74,helpDefIQ:74,passPerception:74,offReb:72,defReb:82,speed:80,accel:80,strength:82,vert:80,stamina:90},
+    '6\'10"': {closing:82,drivingLayup:84,drivingDunk:92,standingDunk:66,postControl:80,midRange:84,threePoint:81,freeThrow:78,postFade:72,offBall:76,passAccuracy:78,ballHandle:75,speedWithBall:75,interiorDef:78,perimDef:80,steal:76,block:78,helpDefIQ:73,passPerception:73,offReb:76,defReb:86,speed:77,accel:77,strength:86,vert:78,stamina:90},
+    '7\'0"':  {closing:80,drivingLayup:82,drivingDunk:93,standingDunk:70,postControl:84,midRange:82,threePoint:78,freeThrow:76,postFade:72,offBall:74,passAccuracy:76,ballHandle:72,speedWithBall:72,interiorDef:82,perimDef:78,steal:74,block:82,helpDefIQ:72,passPerception:72,offReb:80,defReb:90,speed:74,accel:74,strength:90,vert:76,stamina:90},
+  },
+  C:{
+    '6\'11"': {closing:78,drivingLayup:82,drivingDunk:92,standingDunk:74,postControl:86,midRange:80,threePoint:74,freeThrow:76,postFade:74,offBall:72,passAccuracy:76,ballHandle:70,speedWithBall:70,interiorDef:88,perimDef:74,steal:70,block:88,helpDefIQ:74,passPerception:74,offReb:86,defReb:92,speed:72,accel:72,strength:90,vert:74,stamina:90},
+    '7\'0"':  {closing:76,drivingLayup:80,drivingDunk:93,standingDunk:78,postControl:88,midRange:78,threePoint:70,freeThrow:74,postFade:74,offBall:70,passAccuracy:74,ballHandle:68,speedWithBall:68,interiorDef:92,perimDef:72,steal:68,block:92,helpDefIQ:74,passPerception:74,offReb:90,defReb:95,speed:70,accel:70,strength:93,vert:72,stamina:90},
+    '7\'2"':  {closing:74,drivingLayup:78,drivingDunk:92,standingDunk:82,postControl:90,midRange:75,threePoint:65,freeThrow:72,postFade:74,offBall:68,passAccuracy:72,ballHandle:65,speedWithBall:65,interiorDef:95,perimDef:70,steal:65,block:95,helpDefIQ:74,passPerception:74,offReb:93,defReb:97,speed:67,accel:67,strength:95,vert:70,stamina:90},
+    '7\'4"':  {closing:72,drivingLayup:76,drivingDunk:90,standingDunk:85,postControl:92,midRange:72,threePoint:60,freeThrow:70,postFade:72,offBall:65,passAccuracy:70,ballHandle:62,speedWithBall:62,interiorDef:97,perimDef:68,steal:62,block:97,helpDefIQ:74,passPerception:74,offReb:95,defReb:99,speed:64,accel:64,strength:97,vert:68,stamina:90},
+  }
+};
+
+// Attribute display config
+var ATTR_DISPLAY=[
+  {key:'drivingLayup',label:'Driving Layup',cat:'finishing',color:'#fb923c'},
+  {key:'drivingDunk',label:'Driving Dunk',cat:'finishing',color:'#fb923c'},
+  {key:'standingDunk',label:'Standing Dunk',cat:'finishing',color:'#fb923c'},
+  {key:'postControl',label:'Post Control',cat:'finishing',color:'#fb923c'},
+  {key:'midRange',label:'Mid-Range Shot',cat:'shooting',color:'#f59e0b'},
+  {key:'threePoint',label:'3PT Shot',cat:'shooting',color:'#f59e0b'},
+  {key:'freeThrow',label:'Free Throw',cat:'shooting',color:'#f59e0b'},
+  {key:'postFade',label:'Post Fade',cat:'shooting',color:'#f59e0b'},
+  {key:'passAccuracy',label:'Pass Accuracy',cat:'playmaking',color:'#34d399'},
+  {key:'ballHandle',label:'Ball Handle',cat:'playmaking',color:'#34d399'},
+  {key:'speedWithBall',label:'Speed w/ Ball',cat:'playmaking',color:'#34d399'},
+  {key:'perimDef',label:'Perimeter Defense',cat:'defense',color:'#60a5fa'},
+  {key:'steal',label:'Steal',cat:'defense',color:'#60a5fa'},
+  {key:'block',label:'Block',cat:'defense',color:'#60a5fa'},
+  {key:'interiorDef',label:'Interior Defense',cat:'defense',color:'#60a5fa'},
+  {key:'offReb',label:'Off. Rebound',cat:'rebounding',color:'#a78bfa'},
+  {key:'defReb',label:'Def. Rebound',cat:'rebounding',color:'#a78bfa'},
+  {key:'speed',label:'Speed',cat:'physicals',color:'#f472b6'},
+  {key:'accel',label:'Acceleration',cat:'physicals',color:'#f472b6'},
+  {key:'strength',label:'Strength',cat:'physicals',color:'#f472b6'},
+  {key:'vert',label:'Vertical',cat:'physicals',color:'#f472b6'},
+];
+
+// Badge recommendations by playstyle
+var BADGE_DATA={
+  sharp:{
+    badges:[
+      {name:'Corner Specialist',tier:'Legend',desc:'Boosts 3PT from corners to near-automatic — must have for any sharp'},
+      {name:'Catch & Shoot',tier:'HOF',desc:'Boosts all jump shots off a pass — shoot right off the catch'},
+      {name:'Limitless Range',tier:'HOF',desc:'Extends 3PT range to logo and beyond'},
+      {name:'Clutch Shooter',tier:'Gold',desc:'Boosts shots in clutch moments (4th quarter, close game)'},
+      {name:'Space Creator',tier:'Gold',desc:'Improves step-back and pull-up jumpers off the dribble'},
+      {name:'Green Machine',tier:'Gold',desc:'Boosts shot if timed perfectly after another consecutive green'},
+      {name:'Agent 3',tier:'Silver',desc:'Boosts pull-up 3PT shots off the dribble'},
+    ]
+  },
+  slasher:{
+    badges:[
+      {name:'Posterizer',tier:'Legend',desc:'Massively increases chance of contact dunks over defenders'},
+      {name:'Fearless Finisher',tier:'HOF',desc:'Reduces penalty from contact on layups — stay aggressive'},
+      {name:'Acrobat',tier:'HOF',desc:'Boosts hop step, euro, and spin layup animations'},
+      {name:'Giant Slayer',tier:'Gold',desc:'Boosts layups and floaters over taller defenders'},
+      {name:'Fast Twitch',tier:'Gold',desc:'Speeds up standing layup and dunk animations at rim'},
+      {name:'Slithery',tier:'Gold',desc:'Reduces reach-in foul risk, navigate through traffic better'},
+      {name:'Lob City Finisher',tier:'Silver',desc:'Boosts alley-oop catch and finish ability'},
+    ]
+  },
+  playmaker:{
+    badges:[
+      {name:'Dimer',tier:'Legend',desc:'Boosts teammate shot rating significantly off your assists'},
+      {name:'Floor General',tier:'HOF',desc:'Boosts all teammate offensive attributes while you are on court'},
+      {name:'Tight Handles',tier:'HOF',desc:'Protects ball from steals during dribble moves'},
+      {name:'Ankle Breaker',tier:'Gold',desc:'Increases chance of stumbling or falling defender on crossovers'},
+      {name:'Quick First Step',tier:'Gold',desc:'Boosts burst speed out of size-ups and hesitations'},
+      {name:'Bail Out',tier:'Gold',desc:'Increases accuracy of passes thrown out of shot attempts'},
+      {name:'Special Delivery',tier:'Silver',desc:'Boosts shooter after receiving a flashy pass'},
+    ]
+  },
+  defender:{
+    badges:[
+      {name:'Clamps',tier:'Legend',desc:'Massively boosts ability to stay in front of ball handlers — best perimeter badge'},
+      {name:'Interceptor',tier:'HOF',desc:'Greatly increases chance of steals from passing lanes'},
+      {name:'Intimidator',tier:'HOF',desc:'Lowers opponent shot percentage when you are nearby'},
+      {name:'Menace',tier:'Gold',desc:'Reduces offensive attributes of the player you are guarding'},
+      {name:'Pick Dodger',tier:'Gold',desc:'Navigate around screens much more easily'},
+      {name:'Glove',tier:'Gold',desc:'Strips ball more easily with swipe attempts from behind'},
+      {name:'Rim Protector',tier:'Silver',desc:'Boosts shot contest ability near the basket'},
+    ]
+  },
+  rebounder:{
+    badges:[
+      {name:'Worm',tier:'Legend',desc:'Dramatically better repositioning for rebounds when boxed out'},
+      {name:'Brick Wall',tier:'HOF',desc:'Screens are significantly harder to fight through'},
+      {name:'Post Lockdown',tier:'HOF',desc:'Reduces effectiveness of post moves from opponent'},
+      {name:'Box',tier:'Gold',desc:'More effective box outs — push opponents away from boards'},
+      {name:'Hustle Rebounder',tier:'Gold',desc:'Boosts rebound ability from hustle/dive situations'},
+      {name:'Pogo Stick',tier:'Silver',desc:'Recover and jump back up for rebounds much quicker'},
+      {name:'Dream Shake',tier:'Silver',desc:'Makes post moves and fakes harder to read'},
+    ]
+  },
+  'all-around':{
+    badges:[
+      {name:'Catch & Shoot',tier:'HOF',desc:'Boosts all jump shots off a pass'},
+      {name:'Clamps',tier:'HOF',desc:'Boosts ability to stay in front of ball handlers'},
+      {name:'Fearless Finisher',tier:'Gold',desc:'Reduces penalty from contact layups'},
+      {name:'Quick First Step',tier:'Gold',desc:'Boosts burst out of size-ups'},
+      {name:'Corner Specialist',tier:'Gold',desc:'Boosts 3PT from corners'},
+      {name:'Interceptor',tier:'Gold',desc:'Increases chance of steals from passing lanes'},
+      {name:'Hustle Rebounder',tier:'Silver',desc:'Boosts rebound from hustle situations'},
+    ]
+  }
+};
+
+function initBuildCalculator(){
+  updateHeightOptions();
+  updateBuild();
+}
+
+function updateHeightOptions(){
+  var pos=document.getElementById('bld-pos').value;
+  var hSel=document.getElementById('bld-height');
+  var wSel=document.getElementById('bld-wing');
+  var heights=POS_HEIGHTS[pos]||POS_HEIGHTS.PG;
+  hSel.innerHTML=heights.map(function(h){return'<option value="'+h+'">'+h+'</option>';}).join('');
+  // Set default to middle height
+  hSel.selectedIndex=Math.floor(heights.length/2);
+  updateWingspanOptions();
+}
+
+function updateWingspanOptions(){
+  var pos=document.getElementById('bld-pos').value;
+  var hSel=document.getElementById('bld-height');
+  var wSel=document.getElementById('bld-wing');
+  var heights=POS_HEIGHTS[pos]||POS_HEIGHTS.PG;
+  var hIdx=hSel.selectedIndex;
+  var h=heights[hIdx]||heights[0];
+  // Wingspan is height -6" to height +6"
+  var hi=heights.indexOf(h);
+  var wingOptions=[];
+  var allHeights=['5\'1"','5\'2"','5\'3"','5\'4"','5\'5"','5\'6"','5\'7"','5\'8"','5\'9"','5\'10"','5\'11"','6\'0"','6\'1"','6\'2"','6\'3"','6\'4"','6\'5"','6\'6"','6\'7"','6\'8"','6\'9"','6\'10"','6\'11"','7\'0"','7\'1"','7\'2"','7\'3"','7\'4"','7\'5"','7\'6"'];
+  var hAbsIdx=allHeights.indexOf(h);
+  for(var i=Math.max(0,hAbsIdx-3);i<=Math.min(allHeights.length-1,hAbsIdx+3);i++){
+    wingOptions.push(allHeights[i]);
+  }
+  wSel.innerHTML=wingOptions.map(function(w,i){
+    var label=i===3?w+' (Avg)':i<3?w+' (Short)':w+' (Long)';
+    return'<option value="'+w+'">'+label+'</option>';
+  }).join('');
+  wSel.selectedIndex=Math.min(5,wingOptions.length-1); // default max wingspan
+}
+
+function getCaps(){
+  var pos=document.getElementById('bld-pos').value;
+  var height=document.getElementById('bld-height').value;
+  var posData=CAPS_DATA[pos];
+  if(!posData)return null;
+  // Find closest height
+  var caps=posData[height];
+  if(!caps){
+    var heights=Object.keys(posData);
+    caps=posData[heights[Math.floor(heights.length/2)]];
+  }
+  return caps;
+}
+
+function updateBuild(){
+  updateWingspanOptions();
+  var caps=getCaps();
+  if(!caps)return;
+  currentBuildData={
+    pos:document.getElementById('bld-pos').value,
+    height:document.getElementById('bld-height').value,
+    weight:document.getElementById('bld-weight').value,
+    wing:document.getElementById('bld-wing').value,
+    playstyle:currentPlaystyle,
+    caps:caps
+  };
+  renderCaps(caps);
+  renderBadges();
+}
+
+function renderCaps(caps){
+  var el=document.getElementById('bld-caps');
+  if(!el)return;
+  el.innerHTML='';
+  ATTR_DISPLAY.forEach(function(a){
+    var val=caps[a.key]||25;
+    var pct=Math.round((val/99)*100);
+    var valColor=val>=90?'#34d399':val>=80?'#f59e0b':val>=70?'#60a5fa':val>=60?'#c084ff':'#9a8aaa';
+    var div=document.createElement('div');
+    div.className='cap-row';
+    div.innerHTML='<div class="cap-name">'+a.label+'</div>'+
+      '<div class="cap-bar-wrap"><div class="cap-bar" style="width:'+pct+'%;background:'+a.color+';"></div></div>'+
+      '<div class="cap-val" style="color:'+valColor+';">'+val+'</div>';
+    el.appendChild(div);
+  });
+}
+
+function renderBadges(){
+  var el=document.getElementById('bld-badges');
+  if(!el)return;
+  var badges=(BADGE_DATA[currentPlaystyle]||BADGE_DATA.sharp).badges;
+  el.innerHTML='';
+  badges.forEach(function(b){
+    var div=document.createElement('div');div.className='badge-row';
+    div.innerHTML='<div><div class="badge-name">'+b.name+'</div><div class="badge-desc">'+b.desc+'</div></div>'+
+      '<div class="badge-tier '+b.tier.toLowerCase()+'">'+b.tier+'</div>';
+    el.appendChild(div);
+  });
+}
+
+function setPlaystyle(btn){
+  document.querySelectorAll('.playstyle-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  currentPlaystyle=btn.dataset.style;
+  updateBuild();
+}
+
+async function analyzeBuild(){
+  var out=document.getElementById('bld-ai-output');
+  if(!out)return;
+  out.innerHTML='<span style="color:#f59e0b;">🤖 Analyzing your build...</span>';
+  var b=currentBuildData;
+  var prompt='Analyze this NBA 2K26 MyPLAYER build and give specific advice:\n\n'+
+    'Position: '+b.pos+'\n'+
+    'Height: '+b.height+'\n'+
+    'Weight: '+b.weight+' lbs\n'+
+    'Wingspan: '+b.wing+'\n'+
+    'Playstyle: '+b.playstyle+'\n\n'+
+    'Key attribute caps:\n'+
+    '3PT: '+b.caps.threePoint+', Ball Handle: '+b.caps.ballHandle+', Driving Dunk: '+b.caps.drivingDunk+'\n'+
+    'Perimeter Defense: '+b.caps.perimDef+', Speed: '+b.caps.speed+', Pass Accuracy: '+b.caps.passAccuracy+'\n\n'+
+    'Give me: 1) Strengths of this build 2) Weaknesses 3) Best badges to prioritize 4) Best jump shot base 5) How to use this build effectively in Park/REC. Be specific with 2K26 knowledge.';
+
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/ai/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body:JSON.stringify({messages:[{role:'user',content:prompt}],model:'demented-fast'})
+    });
+    var reader=res.body.getReader();var decoder=new TextDecoder();var text='';
+    out.innerHTML='';
+    while(true){
+      var _r=await reader.read();if(_r.done)break;
+      var chunk=decoder.decode(_r.value);
+      var lines=chunk.split('\n');
+      lines.forEach(function(line){
+        if(line.startsWith('data: ')){
+          try{
+            var d=JSON.parse(line.slice(6));
+            if(d.text){text+=d.text;out.innerHTML=marked?marked.parse(text):text;}
+          }catch(e){}
+        }
+      });
+    }
+    playSound('receive');
+  }catch(e){
+    out.innerHTML='<span style="color:#f87171;">Failed to analyze. Try again.</span>';
+  }
+}
+
+function saveBuildToMemory(){
+  var b=currentBuildData;
+  var val=b.pos+' | '+b.height+' | '+b.weight+'lbs | '+b.playstyle+' | 3PT:'+b.caps.threePoint+' BH:'+b.caps.ballHandle+' Dunk:'+b.caps.drivingDunk;
+  document.getElementById('memKeyInp').value='2k_build';
+  document.getElementById('memValInp').value=val;
+  saveMemory();
+  showToast('Build saved to memory! AI will reference it in chat.','success');
+}
+
+function shareBuild(){
+  var b=currentBuildData;
+  var text='🏀 My 2K26 Build\nPos: '+b.pos+' | Height: '+b.height+' | '+b.playstyle.charAt(0).toUpperCase()+b.playstyle.slice(1)+'\n3PT: '+b.caps.threePoint+' | BH: '+b.caps.ballHandle+' | Dunk: '+b.caps.drivingDunk+' | Def: '+b.caps.perimDef+'\nBuilt with Demented AI 🔥 — dementedai.gg';
+  navigator.clipboard.writeText(text).then(function(){showToast('Build copied to clipboard! Share it anywhere 🔗','success');});
+}
+
+function askAIBuild(){
+  var b=currentBuildData;
+  var q='I have a '+b.height+' '+b.pos+' in 2K26 with '+b.playstyle+' playstyle. 3PT cap is '+b.caps.threePoint+', ball handle '+b.caps.ballHandle+', driving dunk '+b.caps.drivingDunk+'. What should I know about using this build?';
+  setView('chat',document.getElementById('nav-chat'));
+  document.getElementById('chatInp').value=q;
+  sendChat();
 }
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────
