@@ -430,11 +430,85 @@ body.light-mode canvas{opacity:0.3;}
       <button class="auth-btn" id="authBtn" onclick="doAuth()">SIGN IN</button>
       <div class="auth-err" id="authErr"></div>
       <div class="auth-msg" id="authMsg"></div>
+      <div id="forgotLink" style="text-align:center;margin-top:8px;">
+        <button onclick="showForgotPassword()" style="background:none;border:none;color:#6a5a9a;font-size:11px;cursor:pointer;text-decoration:underline;">Forgot password?</button>
+      </div>
     </div>
     <div class="auth-hint">
       Create a free account to get started<br>
-      <span style="color:#34d399;font-size:10px;">✓ Free tier available — no credit card needed</span>
+      <span style="color:#34d399;font-size:10px;">✓ Free tier available — no credit card needed</span><br>
+      <span style="font-size:10px;color:#4a3a6a;">By signing up you agree to our <button onclick="showToS()" style="background:none;border:none;color:#6a5a9a;font-size:10px;cursor:pointer;text-decoration:underline;padding:0;">Terms of Service</button> and <button onclick="showPrivacy()" style="background:none;border:none;color:#6a5a9a;font-size:10px;cursor:pointer;text-decoration:underline;padding:0;">Privacy Policy</button></span>
     </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div id="forgotModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(2,0,8,0.92);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:rgba(8,0,28,0.98);border:1px solid rgba(157,99,255,0.25);border-radius:16px;padding:28px;max-width:400px;width:100%;">
+    <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;margin-bottom:4px;" id="forgotTitle">🔒 RESET PASSWORD</div>
+    <div style="font-size:12px;color:#6a5a8a;margin-bottom:20px;" id="forgotSub">Enter your email to receive a reset code</div>
+    <div id="forgotStep1">
+      <input id="forgotEmail" type="email" placeholder="your@email.com" style="width:100%;box-sizing:border-box;background:rgba(157,99,255,0.05);border:1px solid rgba(157,99,255,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;margin-bottom:12px;">
+      <button onclick="sendResetCode()" style="width:100%;padding:12px;border-radius:10px;background:rgba(157,99,255,0.2);border:1px solid rgba(157,99,255,0.4);color:#c084ff;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;">SEND RESET CODE</button>
+    </div>
+    <div id="forgotStep2" style="display:none;">
+      <input id="forgotCode" type="text" placeholder="6-digit code" maxlength="6" style="width:100%;box-sizing:border-box;background:rgba(157,99,255,0.05);border:1px solid rgba(157,99,255,0.2);border-radius:10px;color:#e0d0ff;font-size:20px;padding:12px 14px;outline:none;margin-bottom:8px;text-align:center;letter-spacing:0.3em;">
+      <input id="forgotNewPw" type="password" placeholder="New password (min 8 chars)" style="width:100%;box-sizing:border-box;background:rgba(157,99,255,0.05);border:1px solid rgba(157,99,255,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;margin-bottom:12px;">
+      <button onclick="resetPassword()" style="width:100%;padding:12px;border-radius:10px;background:rgba(157,99,255,0.2);border:1px solid rgba(157,99,255,0.4);color:#c084ff;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;">RESET PASSWORD</button>
+    </div>
+    <div id="forgotMsg" style="font-size:12px;margin-top:10px;min-height:18px;text-align:center;"></div>
+    <button onclick="hideForgotPassword()" style="width:100%;margin-top:12px;padding:8px;border-radius:8px;background:none;border:1px solid rgba(157,99,255,0.15);color:#4a3a6a;font-size:11px;cursor:pointer;">Cancel</button>
+  </div>
+</div>
+
+<!-- TERMS OF SERVICE MODAL -->
+<div id="tosModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(2,0,8,0.92);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:rgba(8,0,28,0.98);border:1px solid rgba(157,99,255,0.25);border-radius:16px;padding:28px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;margin-bottom:16px;">📋 TERMS OF SERVICE</div>
+    <div style="font-size:12px;color:#9a8aaa;line-height:1.8;">
+      <p><strong style="color:#c0b0e0;">Last updated: 2025</strong></p>
+      <p><strong style="color:#c0b0e0;">1. Acceptance</strong><br>By using Demented AI you agree to these terms. If you don't agree, don't use the service.</p>
+      <p><strong style="color:#c0b0e0;">2. Service</strong><br>Demented AI provides AI-powered chat, image generation, code assistance, and related features. We reserve the right to modify or discontinue features at any time.</p>
+      <p><strong style="color:#c0b0e0;">3. Account</strong><br>You are responsible for keeping your account credentials secure. You must be 13 or older to use this service.</p>
+      <p><strong style="color:#c0b0e0;">4. Payments</strong><br>Subscriptions are billed monthly or as a one-time lifetime payment. You can cancel anytime through your billing portal. No refunds on partial months.</p>
+      <p><strong style="color:#c0b0e0;">5. Acceptable Use</strong><br>You agree not to use Demented AI to generate harmful, illegal, or abusive content. We may suspend accounts that violate this policy.</p>
+      <p><strong style="color:#c0b0e0;">6. AI Outputs</strong><br>AI responses are generated automatically and may contain errors. Do not rely on them for legal, medical, or financial decisions.</p>
+      <p><strong style="color:#c0b0e0;">7. Limitation of Liability</strong><br>Demented AI is provided "as is". We are not liable for any damages resulting from use of the service.</p>
+      <p><strong style="color:#c0b0e0;">8. Contact</strong><br>Questions? Contact us at dementedcustoms23@gmail.com</p>
+    </div>
+    <button onclick="document.getElementById('tosModal').style.display='none'" style="width:100%;margin-top:16px;padding:10px;border-radius:8px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:12px;cursor:pointer;">CLOSE</button>
+  </div>
+</div>
+
+<!-- PRIVACY POLICY MODAL -->
+<div id="privacyModal" style="display:none;position:fixed;inset:0;z-index:300;background:rgba(2,0,8,0.92);align-items:center;justify-content:center;padding:20px;">
+  <div style="background:rgba(8,0,28,0.98);border:1px solid rgba(157,99,255,0.25);border-radius:16px;padding:28px;max-width:500px;width:100%;max-height:80vh;overflow-y:auto;">
+    <div style="font-family:'Orbitron',sans-serif;font-size:14px;color:#c084ff;margin-bottom:16px;">🔐 PRIVACY POLICY</div>
+    <div style="font-size:12px;color:#9a8aaa;line-height:1.8;">
+      <p><strong style="color:#c0b0e0;">Last updated: 2025</strong></p>
+      <p><strong style="color:#c0b0e0;">1. What We Collect</strong><br>We collect your email, encrypted password, and usage data (messages sent, images generated). We also store memories you explicitly save.</p>
+      <p><strong style="color:#c0b0e0;">2. How We Use It</strong><br>Your data is used to provide the service, process payments, and improve the product. We do not sell your data to third parties.</p>
+      <p><strong style="color:#c0b0e0;">3. AI Conversations</strong><br>Your chat messages are sent to Anthropic's API to generate responses. Anthropic may use this data per their own privacy policy. Do not share sensitive personal information in chats.</p>
+      <p><strong style="color:#c0b0e0;">4. Payments</strong><br>Payment processing is handled by Stripe. We never store your card details.</p>
+      <p><strong style="color:#c0b0e0;">5. Data Storage</strong><br>Your data is stored securely in encrypted databases. We use industry-standard security practices.</p>
+      <p><strong style="color:#c0b0e0;">6. Your Rights</strong><br>You can request deletion of your account and data at any time by contacting us.</p>
+      <p><strong style="color:#c0b0e0;">7. Cookies</strong><br>We use local storage to keep you logged in. No advertising cookies.</p>
+      <p><strong style="color:#c0b0e0;">8. Contact</strong><br>Privacy questions? Email dementedcustoms23@gmail.com</p>
+    </div>
+    <button onclick="document.getElementById('privacyModal').style.display='none'" style="width:100%;margin-top:16px;padding:10px;border-radius:8px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:12px;cursor:pointer;">CLOSE</button>
+  </div>
+</div>
+
+<!-- PWA INSTALL PROMPT -->
+<div id="pwaPrompt" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:200;background:rgba(8,0,28,0.97);border:1px solid rgba(157,99,255,0.3);border-radius:14px;padding:14px 18px;display:none;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.5);max-width:340px;width:90%;">
+  <img src="logo.png" style="width:36px;height:36px;border-radius:8px;">
+  <div style="flex:1;">
+    <div style="font-size:13px;color:#e0d0ff;font-weight:600;margin-bottom:2px;">Install Demented AI</div>
+    <div style="font-size:11px;color:#6a5a8a;">Add to home screen for the best experience</div>
+  </div>
+  <div style="display:flex;gap:6px;">
+    <button onclick="installPWA()" style="padding:8px 14px;border-radius:8px;background:rgba(157,99,255,0.25);border:1px solid rgba(157,99,255,0.4);color:#c084ff;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;white-space:nowrap;">INSTALL</button>
+    <button onclick="document.getElementById('pwaPrompt').style.display='none'" style="padding:8px;border-radius:8px;background:none;border:1px solid rgba(157,99,255,0.15);color:#4a3a6a;font-size:11px;cursor:pointer;">✕</button>
   </div>
 </div>
 
@@ -1008,6 +1082,7 @@ function switchAuth(mode){
   document.getElementById('rememberRow').style.display=mode==='register'?'none':'flex';
   document.getElementById('authBtn').textContent=mode==='register'?'CREATE FREE ACCOUNT':'SIGN IN';
   document.getElementById('authErr').textContent='';document.getElementById('authMsg').textContent='';
+  var fl=document.getElementById('forgotLink');if(fl)fl.style.display=mode==='login'?'block':'none';
 }
 
 async function doAuth(){
@@ -1077,7 +1152,14 @@ function updateUserUI(){
   document.getElementById('usagePct').textContent=pct+'%';
   var bar=document.getElementById('imgUsageBar');bar.style.width=pct+'%';bar.className='usage-bar-fill'+(pct>80?' danger':'');
   var banner=document.getElementById('freeBanner');
-  if(CURRENT_USER.tier==='free'){banner.style.display='flex';document.getElementById('freeBannerText').textContent='Free tier · 5 messages/day · '+imgUsed+'/'+imgLimit+' images used';}
+  if(CURRENT_USER.tier==='free'){
+    banner.style.display='flex';
+    var today=new Date().toDateString();
+    var stored=localStorage.getItem('dai_free_day_'+CURRENT_USER.id);
+    var dayCount=0;
+    if(stored){var p=JSON.parse(stored);if(p.date===today)dayCount=p.count;}
+    document.getElementById('freeBannerText').textContent='Free tier · '+dayCount+'/'+FREE_DAILY_LIMIT+' messages today · '+imgUsed+'/'+imgLimit+' images used';
+  }
   else banner.style.display='none';
   // Show admin tab for admin email
   var adminTab=document.getElementById('nav-admin');
@@ -1419,6 +1501,7 @@ function removeAttachment(){
 // SEND WITH STREAMING
 async function sendChat(){
   if(chatLoading)return;
+  if(!checkFreeTierLimit())return;
   var inp=document.getElementById('chatInp'),text=inp.value.trim();
   if(!text&&!currentAttachment)return;
   inp.value='';inp.style.height='auto';document.getElementById('charCount').textContent='';
@@ -1570,6 +1653,7 @@ async function sendChat(){
             c.scrollTop=c.scrollHeight;
             playSound('receive');
             speakText(fullText);
+            incrementFreeTierCount();
           }
         }catch(e){}
       }
@@ -1720,6 +1804,124 @@ function getErrorMessage(error){
   if(error.includes('Network')||error.includes('fetch'))return'Connection error — check your internet and try again.';
   if(error.includes('AI request failed'))return'The AI is having a moment. Try again in a few seconds.';
   return error;
+}
+
+// ── PASSWORD RESET ────────────────────────────────────────────────────
+function showForgotPassword(){
+  var m=document.getElementById('forgotModal');
+  if(m){m.style.display='flex';document.getElementById('forgotStep1').style.display='block';document.getElementById('forgotStep2').style.display='none';document.getElementById('forgotMsg').textContent='';}
+}
+function hideForgotPassword(){
+  var m=document.getElementById('forgotModal');if(m)m.style.display='none';
+}
+
+async function sendResetCode(){
+  var email=document.getElementById('forgotEmail').value.trim();
+  var msg=document.getElementById('forgotMsg');
+  if(!email){msg.style.color='#f87171';msg.textContent='Enter your email';return;}
+  msg.style.color='#9a8aaa';msg.textContent='Sending code...';
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/auth/forgot-password',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email})
+    });
+    var data=await res.json();
+    msg.style.color='#34d399';msg.textContent='✓ Code sent! Check your email.';
+    document.getElementById('forgotStep1').style.display='none';
+    document.getElementById('forgotStep2').style.display='block';
+    document.getElementById('forgotTitle').textContent='🔒 ENTER RESET CODE';
+    document.getElementById('forgotSub').textContent='Enter the 6-digit code and your new password';
+    // Dev mode — show code in msg
+    if(data.dev_code){msg.style.color='#f59e0b';msg.textContent='Dev mode — code: '+data.dev_code;}
+  }catch(e){msg.style.color='#f87171';msg.textContent='Failed to send code';}
+}
+
+async function resetPassword(){
+  var email=document.getElementById('forgotEmail').value.trim();
+  var code=document.getElementById('forgotCode').value.trim();
+  var newPw=document.getElementById('forgotNewPw').value;
+  var msg=document.getElementById('forgotMsg');
+  if(!code||!newPw){msg.style.color='#f87171';msg.textContent='Enter code and new password';return;}
+  msg.style.color='#9a8aaa';msg.textContent='Resetting...';
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/auth/reset-password',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:email,code:code,new_password:newPw})
+    });
+    var data=await res.json();
+    if(data.error){msg.style.color='#f87171';msg.textContent=data.error;return;}
+    msg.style.color='#34d399';msg.textContent='✓ Password reset! You can now sign in.';
+    setTimeout(function(){hideForgotPassword();},2000);
+  }catch(e){msg.style.color='#f87171';msg.textContent='Failed to reset password';}
+}
+
+// ── TERMS & PRIVACY ───────────────────────────────────────────────────
+function showToS(){document.getElementById('tosModal').style.display='flex';}
+function showPrivacy(){document.getElementById('privacyModal').style.display='flex';}
+
+// ── PWA INSTALL PROMPT ────────────────────────────────────────────────
+var deferredInstallPrompt=null;
+
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  // Show install prompt after 30 seconds
+  setTimeout(function(){
+    var prompt=document.getElementById('pwaPrompt');
+    if(prompt&&!localStorage.getItem('pwa_installed'))prompt.style.display='flex';
+  },30000);
+});
+
+async function installPWA(){
+  if(!deferredInstallPrompt)return;
+  deferredInstallPrompt.prompt();
+  var result=await deferredInstallPrompt.userChoice;
+  if(result.outcome==='accepted'){
+    localStorage.setItem('pwa_installed','1');
+    showToast('Demented AI installed! 🔥','success');
+  }
+  document.getElementById('pwaPrompt').style.display='none';
+  deferredInstallPrompt=null;
+}
+
+window.addEventListener('appinstalled',function(){
+  localStorage.setItem('pwa_installed','1');
+  document.getElementById('pwaPrompt').style.display='none';
+});
+
+// ── FREE TIER LIMIT ENFORCEMENT ───────────────────────────────────────
+var freeDailyCount=0;
+var FREE_DAILY_LIMIT=5;
+
+function checkFreeTierLimit(){
+  if(!CURRENT_USER||CURRENT_USER.tier!=='free')return true;
+  var today=new Date().toDateString();
+  var stored=localStorage.getItem('dai_free_day_'+CURRENT_USER.id);
+  var count=0;
+  if(stored){
+    var parsed=JSON.parse(stored);
+    if(parsed.date===today)count=parsed.count;
+  }
+  freeDailyCount=count;
+  if(count>=FREE_DAILY_LIMIT){
+    showToast('Free tier limit reached ('+FREE_DAILY_LIMIT+'/day). Upgrade for unlimited!','error');
+    showUpgradeModal();
+    return false;
+  }
+  return true;
+}
+
+function incrementFreeTierCount(){
+  if(!CURRENT_USER||CURRENT_USER.tier!=='free')return;
+  var today=new Date().toDateString();
+  freeDailyCount++;
+  localStorage.setItem('dai_free_day_'+CURRENT_USER.id,JSON.stringify({date:today,count:freeDailyCount}));
+  // Warn at 4/5
+  if(freeDailyCount===FREE_DAILY_LIMIT-1){
+    showToast('⚠️ 1 free message remaining today. Upgrade for unlimited!','');
+  }
 }
 
 // ── BROWSER/ELECTRON BRIDGE ──────────────────────────────────────────
