@@ -632,6 +632,7 @@ body.light-mode canvas{opacity:0.3;}
           <div class="s-row"><span class="s-row-label">Plan</span><span class="s-badge pro" id="settingsPlan">Pro</span></div>
           <div class="s-row"><span class="s-row-label">Subscription</span><span id="settingsSubEnd" class="s-row-value">—</span></div>
           <button class="action-btn upgrade-btn" onclick="showUpgradeModal()">⚡ Upgrade Plan</button>
+          <button class="action-btn" onclick="openBillingPortal()" style="background:rgba(96,165,250,0.1);border:1px solid rgba(96,165,250,0.3);color:#60a5fa;margin-top:6px;">💳 Manage Billing</button>
           <button class="action-btn logout-btn" onclick="logout()">Sign Out</button>
         </div>
         <div class="s-card">
@@ -735,49 +736,117 @@ body.light-mode canvas{opacity:0.3;}
   <!-- ADMIN VIEW -->
   <div class="view" id="view-admin">
     <div class="cust-wrap">
-      <!-- Header -->
-      <div style="margin-bottom:28px;">
+      <div style="margin-bottom:20px;">
         <div style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:0.12em;color:#f59e0b;margin-bottom:6px;">⚡ ADMIN PANEL</div>
-        <div style="font-size:12px;color:#7a6a9a;">Manage users and subscriptions — DementedOG only</div>
+        <div style="font-size:12px;color:#7a6a9a;">DementedOG only — full platform control</div>
+      </div>
+
+      <!-- Platform Stats -->
+      <div style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(180,100,0,0.05));border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:20px;margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;letter-spacing:0.08em;">📊 PLATFORM STATS</div>
+          <button onclick="loadAdminStats()" style="padding:6px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:10px;cursor:pointer;font-family:'Orbitron',sans-serif;">REFRESH</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+          <div style="background:rgba(8,0,28,0.5);border:1px solid rgba(245,158,11,0.15);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#f59e0b;" id="stat-total-users">—</div>
+            <div style="font-size:10px;color:#6a5a8a;margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;">Total Users</div>
+          </div>
+          <div style="background:rgba(8,0,28,0.5);border:1px solid rgba(52,211,153,0.2);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#34d399;" id="stat-active-subs">—</div>
+            <div style="font-size:10px;color:#6a5a8a;margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;">Paying Subs</div>
+          </div>
+          <div style="background:rgba(8,0,28,0.5);border:1px solid rgba(96,165,250,0.2);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#60a5fa;" id="stat-new-today">—</div>
+            <div style="font-size:10px;color:#6a5a8a;margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;">New Today</div>
+          </div>
+          <div style="background:rgba(8,0,28,0.5);border:1px solid rgba(157,99,255,0.2);border-radius:12px;padding:14px;text-align:center;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:#c084ff;" id="stat-new-week">—</div>
+            <div style="font-size:10px;color:#6a5a8a;margin-top:4px;text-transform:uppercase;letter-spacing:0.06em;">New This Week</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;">
+          <div style="background:rgba(8,0,28,0.4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#9a9aaa;" id="stat-free">—</div><div style="font-size:10px;color:#5a4a7a;">Free</div></div>
+          <div style="background:rgba(8,0,28,0.4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#c084ff;" id="stat-basic">—</div><div style="font-size:10px;color:#5a4a7a;">Basic</div></div>
+          <div style="background:rgba(8,0,28,0.4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#60a5fa;" id="stat-standard">—</div><div style="font-size:10px;color:#5a4a7a;">Standard</div></div>
+          <div style="background:rgba(8,0,28,0.4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#f59e0b;" id="stat-pro">—</div><div style="font-size:10px;color:#5a4a7a;">Pro</div></div>
+          <div style="background:rgba(8,0,28,0.4);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:16px;font-weight:700;color:#34d399;" id="stat-lifetime">—</div><div style="font-size:10px;color:#5a4a7a;">Lifetime</div></div>
+        </div>
       </div>
 
       <!-- Grant tier -->
-      <div style="background:linear-gradient(135deg,rgba(245,158,11,0.08),rgba(180,100,0,0.05));border:1px solid rgba(245,158,11,0.25);border-radius:16px;padding:24px;margin-bottom:20px;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">GRANT / CHANGE TIER</div>
-        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
-          <input id="adminEmail" placeholder="User email address" style="flex:1;min-width:200px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.25);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
-          <select id="adminTier" style="background:rgba(8,0,28,0.9);border:1px solid rgba(245,158,11,0.25);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.2);border-radius:16px;padding:20px;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:14px;letter-spacing:0.08em;">GRANT / CHANGE TIER</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+          <input id="adminEmail" placeholder="User email address" style="flex:1;min-width:200px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;font-family:'Inter',sans-serif;">
+          <select id="adminTier" style="background:rgba(8,0,28,0.9);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;font-family:'Inter',sans-serif;">
             <option value="free">Free</option>
             <option value="basic">Basic — $9.99/mo</option>
             <option value="standard">Standard — $19.99/mo</option>
             <option value="pro">Pro — $34.99/mo</option>
             <option value="lifetime">Lifetime — $149</option>
           </select>
-          <button onclick="adminGrantTier()" style="padding:12px 24px;border-radius:10px;background:linear-gradient(135deg,rgba(245,158,11,0.3),rgba(180,100,0,0.2));border:1px solid rgba(245,158,11,0.5);color:#f59e0b;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:0.06em;">GRANT ⚡</button>
+          <button onclick="adminGrantTier()" style="padding:10px 20px;border-radius:10px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.4);color:#f59e0b;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;">GRANT ⚡</button>
         </div>
-        <div id="adminMsg" style="font-size:12px;color:#34d399;min-height:20px;padding:4px 0;"></div>
-      </div>
-
-      <!-- Quick grant -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:24px;margin-bottom:20px;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">QUICK GRANT TO EMAIL ABOVE</div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;">
-          <button onclick="adminQuickGrant('free')" style="padding:10px 20px;border-radius:10px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.3);color:#9a9aaa;font-size:12px;cursor:pointer;font-weight:600;">Free</button>
-          <button onclick="adminQuickGrant('basic')" style="padding:10px 20px;border-radius:10px;background:rgba(157,99,255,0.12);border:1px solid rgba(157,99,255,0.35);color:#c084ff;font-size:12px;cursor:pointer;font-weight:600;">Basic</button>
-          <button onclick="adminQuickGrant('standard')" style="padding:10px 20px;border-radius:10px;background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.35);color:#60a5fa;font-size:12px;cursor:pointer;font-weight:600;">Standard</button>
-          <button onclick="adminQuickGrant('pro')" style="padding:10px 20px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;font-size:12px;cursor:pointer;font-weight:600;">Pro 🔥</button>
-          <button onclick="adminQuickGrant('lifetime')" style="padding:10px 20px;border-radius:10px;background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.35);color:#34d399;font-size:12px;cursor:pointer;font-weight:600;">Lifetime ⚡</button>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;">
+          <button onclick="adminQuickGrant('free')" style="padding:7px 14px;border-radius:8px;background:rgba(100,100,100,0.15);border:1px solid rgba(100,100,100,0.3);color:#9a9aaa;font-size:11px;cursor:pointer;">Free</button>
+          <button onclick="adminQuickGrant('basic')" style="padding:7px 14px;border-radius:8px;background:rgba(157,99,255,0.1);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;">Basic</button>
+          <button onclick="adminQuickGrant('standard')" style="padding:7px 14px;border-radius:8px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;font-size:11px;cursor:pointer;">Standard</button>
+          <button onclick="adminQuickGrant('pro')" style="padding:7px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:11px;cursor:pointer;">Pro 🔥</button>
+          <button onclick="adminQuickGrant('lifetime')" style="padding:7px 14px;border-radius:8px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:11px;cursor:pointer;">Lifetime ⚡</button>
         </div>
+        <div id="adminMsg" style="font-size:12px;color:#34d399;min-height:18px;"></div>
       </div>
 
       <!-- User lookup -->
-      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:24px;">
-        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:16px;letter-spacing:0.08em;">USER LOOKUP</div>
-        <div style="display:flex;gap:10px;margin-bottom:16px;">
-          <input id="adminLookupEmail" placeholder="Enter email to look up" style="flex:1;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:10px;color:#e0d0ff;font-size:13px;padding:12px 14px;outline:none;font-family:'Inter',sans-serif;">
-          <button onclick="adminLookup()" style="padding:12px 24px;border-radius:10px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.35);color:#f59e0b;font-size:12px;cursor:pointer;font-family:'Orbitron',sans-serif;letter-spacing:0.06em;">LOOKUP</button>
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(245,158,11,0.15);border-radius:16px;padding:20px;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f59e0b;margin-bottom:14px;letter-spacing:0.08em;">USER LOOKUP</div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input id="adminLookupEmail" placeholder="Enter email to look up" style="flex:1;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:10px;color:#e0d0ff;font-size:13px;padding:10px 12px;outline:none;font-family:'Inter',sans-serif;">
+          <button onclick="adminLookup()" style="padding:10px 18px;border-radius:10px;background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.3);color:#f59e0b;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">LOOKUP</button>
         </div>
         <div id="adminLookupResult" style="font-size:13px;color:#9a8aaa;"></div>
+      </div>
+
+      <!-- Staff Management -->
+      <div style="background:rgba(8,0,28,0.6);border:1px solid rgba(96,165,250,0.2);border-radius:16px;padding:20px;margin-bottom:16px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#60a5fa;margin-bottom:14px;letter-spacing:0.08em;">👥 STAFF & MOD MANAGEMENT</div>
+        <div style="margin-bottom:14px;">
+          <div style="font-size:11px;color:#7a6a9a;margin-bottom:8px;">Add Staff Member</div>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;">
+            <input id="staffEmail" placeholder="User email" style="flex:1;min-width:160px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.2);border-radius:8px;color:#e0d0ff;font-size:12px;padding:10px 12px;outline:none;font-family:'Inter',sans-serif;">
+            <select id="staffRole" style="background:rgba(8,0,28,0.9);border:1px solid rgba(96,165,250,0.2);border-radius:8px;color:#e0d0ff;font-size:12px;padding:10px 12px;outline:none;">
+              <option value="mod">Moderator</option>
+              <option value="support">Support</option>
+              <option value="admin">Admin</option>
+            </select>
+            <button onclick="addStaffMember()" style="padding:10px 16px;border-radius:8px;background:rgba(96,165,250,0.15);border:1px solid rgba(96,165,250,0.35);color:#60a5fa;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">ADD</button>
+          </div>
+          <div style="font-size:11px;color:#7a6a9a;margin-bottom:8px;">Permissions</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-grant" style="accent-color:#60a5fa;"> Grant Tiers</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-lookup" style="accent-color:#60a5fa;"> User Lookup</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-revoke" style="accent-color:#60a5fa;"> Revoke Access</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-stats" style="accent-color:#60a5fa;"> View Stats</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-chat" style="accent-color:#60a5fa;"> Chat Support</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:#c0b0e0;cursor:pointer;"><input type="checkbox" id="perm-content" style="accent-color:#60a5fa;"> Content Manage</label>
+          </div>
+          <div id="staffMsg" style="font-size:12px;color:#34d399;margin-top:8px;min-height:18px;"></div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <div style="font-size:11px;color:#7a6a9a;text-transform:uppercase;letter-spacing:0.06em;">Current Staff</div>
+            <button onclick="loadStaffList()" style="background:none;border:none;color:#60a5fa;font-size:11px;cursor:pointer;">↻ Refresh</button>
+          </div>
+          <div id="staffList"><div style="font-size:12px;color:#4a3a6a;text-align:center;padding:16px;">No staff members yet</div></div>
+        </div>
+      </div>
+
+      <!-- Danger zone -->
+      <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.2);border-radius:16px;padding:20px;">
+        <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:#f87171;margin-bottom:14px;letter-spacing:0.08em;">⚠️ DANGER ZONE</div>
+        <button onclick="adminRevokeUser()" style="padding:10px 16px;border-radius:8px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:11px;cursor:pointer;font-family:'Orbitron',sans-serif;">REVOKE USER ACCESS</button>
+        <div style="font-size:11px;color:#6a3a3a;margin-top:8px;">Uses email from lookup field above</div>
       </div>
     </div>
   </div>
@@ -1051,6 +1120,7 @@ function setView(name,btn){
   var hp=document.getElementById('historyPanel'),htb=document.getElementById('histToggleBtn');
   if(name==='chat'){hp.style.display='flex';if(htb)htb.style.display='block';}else{hp.style.display='none';if(htb)htb.style.display='none';}
   if(name==='customize'){updateUserUI();updateHistCount();}
+  if(name==='admin'){loadAdminStats();loadStaffList();}
 }
 
 function toggleHistory(){
@@ -1866,8 +1936,43 @@ startRecording=async function(){analyticsData.voice++;await _origStartRecording(
 var _origDoSearch=doSearch;
 doSearch=async function(q){analyticsData.searches++;return await _origDoSearch(q);};
 
+async function openBillingPortal(){
+  try{
+    showToast('Opening billing portal...','');
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/stripe/portal',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN}
+    });
+    var data=await res.json();
+    if(data.error){showToast('No billing account found. Subscribe first.','error');return;}
+    if(data.url){
+      if(window.dai&&window.dai.openUrl)window.dai.openUrl(data.url);
+      else window.open(data.url,'_blank');
+    }
+  }catch(e){showToast('Failed to open billing portal','error');}
+}
+
 // ── ADMIN PANEL ───────────────────────────────────────────────────────
 var ADMIN_SECRET='dementedvision2018';
+
+async function loadAdminStats(){
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/admin/stats',{
+      headers:{'x-admin-secret':ADMIN_SECRET}
+    });
+    var data=await res.json();
+    if(data.error){showToast('Stats error: '+data.error,'error');return;}
+    document.getElementById('stat-total-users').textContent=data.total||0;
+    document.getElementById('stat-active-subs').textContent=data.active_subscribers||0;
+    document.getElementById('stat-new-today').textContent=data.new_today||0;
+    document.getElementById('stat-new-week').textContent=data.new_week||0;
+    document.getElementById('stat-free').textContent=data.free||0;
+    document.getElementById('stat-basic').textContent=data.basic||0;
+    document.getElementById('stat-standard').textContent=data.standard||0;
+    document.getElementById('stat-pro').textContent=data.pro||0;
+    document.getElementById('stat-lifetime').textContent=data.lifetime||0;
+  }catch(e){showToast('Failed to load stats','error');}
+}
 
 async function adminGrantTier(){
   var email=document.getElementById('adminEmail').value.trim();
@@ -1893,6 +1998,20 @@ function adminQuickGrant(tier){
   adminGrantTier();
 }
 
+async function adminRevokeUser(){
+  var email=document.getElementById('adminLookupEmail').value.trim();
+  if(!email){showToast('Enter email in lookup field first','error');return;}
+  if(!confirm('Revoke access for '+email+'?'))return;
+  try{
+    await fetch('https://demented-ai-backend-production.up.railway.app/api/admin/revoke',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-secret':ADMIN_SECRET},
+      body:JSON.stringify({email:email})
+    });
+    showToast('Access revoked for '+email,'success');
+  }catch(e){showToast('Failed to revoke','error');}
+}
+
 async function adminLookup(){
   var email=document.getElementById('adminLookupEmail').value.trim();
   var result=document.getElementById('adminLookupResult');
@@ -1906,14 +2025,96 @@ async function adminLookup(){
     if(data.error){result.textContent='Error: '+data.error;}
     else if(data.user){
       var u=data.user;
-      result.innerHTML='<div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:8px;padding:10px;">' +
-        '<div style="color:#f59e0b;font-size:11px;margin-bottom:6px;">'+escHtml(u.email)+'</div>'+
-        '<div style="color:#9a8aaa;font-size:11px;">Tier: <span style="color:#e0d0ff;">'+escHtml(u.tier||'free')+'</span></div>'+
-        '<div style="color:#9a8aaa;font-size:11px;">Joined: <span style="color:#e0d0ff;">'+new Date(u.created_at).toLocaleDateString()+'</span></div>'+
-        '<div style="color:#9a8aaa;font-size:11px;">Images: <span style="color:#e0d0ff;">'+(u.image_count_month||0)+'</span></div>'+
-        '</div>';
-    } else {result.textContent='User not found';}
+      var tierColors={free:'#9a9aaa',basic:'#c084ff',standard:'#60a5fa',pro:'#f59e0b',lifetime:'#34d399'};
+      var tc=tierColors[u.tier]||'#c084ff';
+      result.innerHTML='<div style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:10px;padding:12px;">'+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:12px;">'+
+        '<div><span style="color:#6a5a8a;">Email: </span><span style="color:#e0d0ff;">'+escHtml(u.email)+'</span></div>'+
+        '<div><span style="color:#6a5a8a;">Tier: </span><span style="color:'+tc+';font-weight:700;">'+escHtml(u.tier||'free')+'</span></div>'+
+        '<div><span style="color:#6a5a8a;">Active: </span><span style="color:'+(u.active?'#34d399':'#f87171')+';">'+(u.active?'Yes':'No')+'</span></div>'+
+        '<div><span style="color:#6a5a8a;">Joined: </span><span style="color:#e0d0ff;">'+new Date(u.created_at).toLocaleDateString()+'</span></div>'+
+        '<div><span style="color:#6a5a8a;">Images: </span><span style="color:#e0d0ff;">'+(u.image_count_month||0)+'</span></div>'+
+        '<div><span style="color:#6a5a8a;">Chats: </span><span style="color:#e0d0ff;">'+(u.chat_count_month||0)+'</span></div>'+
+        '</div></div>';
+    }else{result.textContent='User not found';}
   }catch(e){result.textContent='Failed: '+e.message;}
+}
+
+async function addStaffMember(){
+  var email=document.getElementById('staffEmail').value.trim();
+  var role=document.getElementById('staffRole').value;
+  var msg=document.getElementById('staffMsg');
+  if(!email){msg.style.color='#f87171';msg.textContent='Enter email';return;}
+  var permissions={
+    grant:document.getElementById('perm-grant').checked,
+    lookup:document.getElementById('perm-lookup').checked,
+    revoke:document.getElementById('perm-revoke').checked,
+    stats:document.getElementById('perm-stats').checked,
+    chat:document.getElementById('perm-chat').checked,
+    content:document.getElementById('perm-content').checked,
+  };
+  msg.style.color='#9a8aaa';msg.textContent='Adding...';
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/admin/staff',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-admin-secret':ADMIN_SECRET},
+      body:JSON.stringify({email:email,role:role,permissions:permissions})
+    });
+    var data=await res.json();
+    if(data.error){msg.style.color='#f87171';msg.textContent='Error: '+data.error;}
+    else{
+      msg.style.color='#34d399';msg.textContent='✓ '+email+' added as '+role+'!';
+      document.getElementById('staffEmail').value='';
+      loadStaffList();
+    }
+  }catch(e){msg.style.color='#f87171';msg.textContent='Failed: '+e.message;}
+  setTimeout(function(){msg.textContent='';},4000);
+}
+
+async function loadStaffList(){
+  var list=document.getElementById('staffList');
+  if(!list)return;
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/admin/staff',{
+      headers:{'x-admin-secret':ADMIN_SECRET}
+    });
+    var data=await res.json();
+    if(!data.staff||data.staff.length===0){
+      list.innerHTML='<div style="font-size:12px;color:#4a3a6a;text-align:center;padding:16px;">No staff members yet</div>';
+      return;
+    }
+    list.innerHTML='';
+    data.staff.forEach(function(s){
+      var roleColors={mod:'#60a5fa',support:'#34d399',admin:'#f59e0b'};
+      var rc=roleColors[s.role]||'#60a5fa';
+      var perms=s.permissions||{};
+      var permList=Object.keys(perms).filter(function(k){return perms[k];}).join(', ')||'None';
+      var div=document.createElement('div');
+      div.style.cssText='background:rgba(8,0,28,0.4);border:1px solid rgba(96,165,250,0.15);border-radius:10px;padding:12px;display:flex;justify-content:space-between;align-items:center;';
+      div.innerHTML='<div>'+
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">'+
+          '<span style="font-size:13px;color:#e0d0ff;font-weight:600;">'+escHtml(s.email)+'</span>'+
+          '<span style="font-size:10px;padding:2px 8px;border-radius:8px;background:'+rc+'22;color:'+rc+';border:1px solid '+rc+'44;">'+s.role+'</span>'+
+        '</div>'+
+        '<div style="font-size:11px;color:#6a5a8a;">Permissions: '+escHtml(permList)+'</div>'+
+        '<div style="font-size:10px;color:#4a3a6a;">Added: '+new Date(s.created_at).toLocaleDateString()+'</div>'+
+      '</div>'+
+      '<button onclick="removeStaffMember(\''+escHtml(s.email)+'\')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;font-size:11px;padding:6px 12px;border-radius:8px;cursor:pointer;">Remove</button>';
+      list.appendChild(div);
+    });
+  }catch(e){list.innerHTML='<div style="font-size:12px;color:#f87171;text-align:center;padding:16px;">Failed to load staff</div>';}
+}
+
+async function removeStaffMember(email){
+  if(!confirm('Remove '+email+' from staff?'))return;
+  try{
+    await fetch('https://demented-ai-backend-production.up.railway.app/api/admin/staff/'+encodeURIComponent(email),{
+      method:'DELETE',
+      headers:{'x-admin-secret':ADMIN_SECRET}
+    });
+    showToast(email+' removed from staff','success');
+    loadStaffList();
+  }catch(e){showToast('Failed to remove','error');}
 }
 
 // ── CHAT FOLDERS ─────────────────────────────────────────────────────
