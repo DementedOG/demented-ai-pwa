@@ -1233,10 +1233,56 @@ async function generateAITitle(messages){
 function newChat(){
   if(chatHistory.length>0&&currentChatId)saveCurrentChat();
   currentChatId=genId();chatHistory=[];
-  document.getElementById('msgs').innerHTML='';
+  var msgs=document.getElementById('msgs');
+  msgs.innerHTML='';
   var sugs=document.getElementById('sugsBar');if(sugs)sugs.style.display='flex';
-  addMsg('ai',"What's good — I'm Demented AI. Ask me anything — 2K26 builds, coding, fitness, business, music, gaming, and more. What do you need?");
+
+  // Show welcome + prompt library
+  var welcome=document.createElement('div');
+  welcome.id='promptLibrary';
+  welcome.style.cssText='padding:24px 16px;display:flex;flex-direction:column;align-items:center;';
+  welcome.innerHTML=
+    '<div style="text-align:center;margin-bottom:24px;">'+
+      '<div style="font-family:\'Orbitron\',sans-serif;font-size:16px;font-weight:900;color:#c084ff;letter-spacing:0.1em;margin-bottom:6px;">DEMENTED AI</div>'+
+      '<div style="font-size:13px;color:#7a6a9a;">Ask anything — 2K26, coding, fitness, business, music</div>'+
+    '</div>'+
+    '<div style="width:100%;max-width:600px;">'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'+
+        promptBtn('🏀','Analyze my 2K26 build','I want to analyze my 2K26 build. Ask me my position, height, and playstyle and give me detailed advice.')+
+        promptBtn('💻','Review my code','I want you to review my code. Ask me what language and what I\'m trying to do, then help me improve it.')+
+        promptBtn('💪','Create workout program','Create a personalized workout program for me. Ask me my goals, schedule, and equipment first.')+
+        promptBtn('🎵','Help with my music','I need help with music production. Ask me what DAW I use and what I\'m working on.')+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">'+
+        promptBtn('🎮','Best 2K26 badges for my build','What are the best badges for a 2K26 build? Ask me my playstyle and position first.')+
+        promptBtn('🌐','Build me a full-stack app','Build me a complete web app. Ask me what it should do and I\'ll give you all the details.')+
+        promptBtn('💰','Help me make money online','What are the best ways to make money online in 2025? Give me real actionable strategies.')+
+        promptBtn('🔥','Roast my idea','I have a business/project idea. Ask me what it is then give me an honest roast and real feedback.')+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">'+
+        promptBtn('🎯','2K shot timing tips','Give me the best shot timing tips for 2K26 — green windows, rhythm shooting, release points.')+
+        promptBtn('🤖','Explain AI to me','Explain how AI actually works in simple terms. Break it down so anyone can understand.')+
+        promptBtn('📈','Marketing strategy','Help me create a marketing strategy for my business. Ask me about my product and target audience.')+
+        promptBtn('🧠','What can you do?','Tell me everything you can do. What are all your features and how do I get the most out of you?')+
+      '</div>'+
+    '</div>';
+  msgs.appendChild(welcome);
   renderHistoryList();setView('chat',document.getElementById('nav-chat'));
+}
+
+function promptBtn(emoji,label,prompt){
+  return '<button onclick="usePrompt(\''+prompt.replace(/'/g,"\\'")+'\')" style="background:rgba(8,0,28,0.5);border:1px solid rgba(157,99,255,0.12);border-radius:12px;padding:12px;text-align:left;cursor:pointer;transition:all 0.15s;width:100%;" onmouseover="this.style.borderColor=\'rgba(157,99,255,0.35)\';this.style.background=\'rgba(157,99,255,0.08)\'" onmouseout="this.style.borderColor=\'rgba(157,99,255,0.12)\';this.style.background=\'rgba(8,0,28,0.5)\'">'+
+    '<div style="font-size:18px;margin-bottom:6px;">'+emoji+'</div>'+
+    '<div style="font-size:11px;color:#c0b0e0;font-weight:600;line-height:1.4;">'+label+'</div>'+
+  '</button>';
+}
+
+function usePrompt(prompt){
+  // Hide prompt library
+  var pl=document.getElementById('promptLibrary');if(pl)pl.remove();
+  var inp=document.getElementById('chatInp');
+  if(inp){inp.value=prompt;inp.focus();}
+  sendChat();
 }
 
 function saveCurrentChat(){
@@ -1827,13 +1873,18 @@ async function sendResetCode(){
       body:JSON.stringify({email:email})
     });
     var data=await res.json();
-    msg.style.color='#34d399';msg.textContent='✓ Code sent! Check your email.';
+    if(data.error){msg.style.color='#f87171';msg.textContent=data.error;return;}
     document.getElementById('forgotStep1').style.display='none';
     document.getElementById('forgotStep2').style.display='block';
     document.getElementById('forgotTitle').textContent='🔒 ENTER RESET CODE';
-    document.getElementById('forgotSub').textContent='Enter the 6-digit code and your new password';
-    // Dev mode — show code in msg
-    if(data.dev_code){msg.style.color='#f59e0b';msg.textContent='Dev mode — code: '+data.dev_code;}
+    document.getElementById('forgotSub').textContent='Enter the 6-digit code from your email and your new password';
+    // Show code if email service not set up yet
+    if(data.dev_code){
+      msg.style.color='#f59e0b';
+      msg.textContent='📧 Email not configured yet — your code is: '+data.dev_code;
+    } else {
+      msg.style.color='#34d399';msg.textContent='✓ Code sent to '+email;
+    }
   }catch(e){msg.style.color='#f87171';msg.textContent='Failed to send code';}
 }
 
@@ -1918,9 +1969,15 @@ function incrementFreeTierCount(){
   var today=new Date().toDateString();
   freeDailyCount++;
   localStorage.setItem('dai_free_day_'+CURRENT_USER.id,JSON.stringify({date:today,count:freeDailyCount}));
+  // Update banner
+  var banner=document.getElementById('freeBannerText');
+  if(banner)banner.textContent='Free tier · '+freeDailyCount+'/'+FREE_DAILY_LIMIT+' messages today · '+(CURRENT_USER.image_count_month||0)+'/'+(CURRENT_USER.image_limit||2)+' images used';
   // Warn at 4/5
   if(freeDailyCount===FREE_DAILY_LIMIT-1){
     showToast('⚠️ 1 free message remaining today. Upgrade for unlimited!','');
+  }
+  if(freeDailyCount>=FREE_DAILY_LIMIT){
+    showToast('Free tier limit reached. Upgrade for unlimited!','error');
   }
 }
 
