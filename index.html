@@ -1747,7 +1747,7 @@ async function generateImage(){
   var prompt=document.getElementById('imgPrompt').value.trim();if(!prompt)return;
   var btn=document.getElementById('imgBtn'),area=document.getElementById('imgResultArea');
   btn.disabled=true;btn.textContent='GENERATING...';
-  area.innerHTML='<div class="img-placeholder"><div class="typing-ind"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="img-placeholder-text" style="margin-top:14px;">Creating your image...<br>Claude is enhancing your prompt ✨<br>This may take 15-30 seconds</div></div>';
+  area.innerHTML='<div class="img-placeholder"><div class="typing-ind"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="img-placeholder-text" style="margin-top:14px;">Creating your image...<br>Demented AI is enhancing your prompt ✨<br>This may take 15-30 seconds</div></div>';
   try{
     var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/ai/image',{
       method:'POST',
