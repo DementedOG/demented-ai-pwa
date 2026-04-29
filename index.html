@@ -660,8 +660,8 @@ body.light-mode canvas{opacity:0.3;}
               <option value="1024x1792">Tall (1024×1792)</option>
             </select>
             <select class="img-sel" id="imgQuality">
-              <option value="standard">Standard Quality</option>
               <option value="hd">HD Quality</option>
+              <option value="standard">Standard Quality</option>
             </select>
             <button class="img-gen-btn" id="imgBtn" onclick="generateImage()">⚡ GENERATE</button>
           </div>
@@ -671,6 +671,17 @@ body.light-mode canvas{opacity:0.3;}
           <div class="img-placeholder">
             <svg viewBox="0 0 64 64" fill="none" width="56" height="56" style="opacity:0.25;"><rect x="4" y="4" width="56" height="56" rx="10" stroke="#9d63ff" stroke-width="1.5"/><circle cx="22" cy="22" r="5" stroke="#9d63ff" stroke-width="1.5"/><path d="M4 40l16-16 11 11 8-8 21 21" stroke="#9d63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
             <div class="img-placeholder-text">Your generated image will appear here.<br>Describe anything you can imagine.</div>
+          </div>
+        </div>
+
+        <!-- Image History Gallery -->
+        <div style="margin-top:24px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div style="font-family:'Orbitron',sans-serif;font-size:11px;color:#c084ff;letter-spacing:0.08em;">🖼 IMAGE HISTORY</div>
+            <button onclick="loadImageHistory()" style="background:none;border:none;color:#6a5a8a;font-size:11px;cursor:pointer;">↻ Refresh</button>
+          </div>
+          <div id="imgHistory" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+            <div style="font-size:11px;color:#4a3a6a;text-align:center;padding:20px;grid-column:1/-1;">Generate your first image to see history here</div>
           </div>
         </div>
       </div>
@@ -1203,6 +1214,7 @@ function setView(name,btn){
   if(name==='chat'){hp.style.display='flex';if(htb)htb.style.display='block';}else{hp.style.display='none';if(htb)htb.style.display='none';}
   if(name==='customize'){updateUserUI();updateHistCount();}
   if(name==='admin'){loadAdminStats();loadStaffList();}
+  if(name==='image'){loadImageHistory();}
 }
 
 function toggleHistory(){
@@ -1735,16 +1747,82 @@ async function generateImage(){
   var prompt=document.getElementById('imgPrompt').value.trim();if(!prompt)return;
   var btn=document.getElementById('imgBtn'),area=document.getElementById('imgResultArea');
   btn.disabled=true;btn.textContent='GENERATING...';
-  area.innerHTML='<div class="img-placeholder"><div class="typing-ind"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="img-placeholder-text" style="margin-top:14px;">Creating your image...<br>This may take 10-20 seconds</div></div>';
-  var res=await window.dai.api({method:'POST',path:'/api/ai/image',body:{prompt:prompt,size:document.getElementById('imgSize').value,quality:document.getElementById('imgQuality').value},token:TOKEN});
-  btn.disabled=false;btn.textContent='⚡ GENERATE';
-  if(res&&res.url){
-    if(CURRENT_USER)CURRENT_USER.image_count_month=(CURRENT_USER.image_count_month||0)+1;
-    document.getElementById('imgCount').textContent=CURRENT_USER?CURRENT_USER.image_count_month:'?';
-    area.innerHTML='<div class="img-result"><img src="'+res.url+'" alt="Generated"><div class="img-result-info">'+escHtml(res.revised_prompt||prompt)+'</div><button class="img-download-btn" onclick="window.dai.openURL(\''+res.url+'\')">Open Full Size ↗</button></div>';
-  } else {
-    area.innerHTML='<div class="img-placeholder"><div class="img-placeholder-text" style="color:#f87171;">'+(res&&res.error?escHtml(res.error):'Generation failed. Try again.')+'</div></div>';
+  area.innerHTML='<div class="img-placeholder"><div class="typing-ind"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div><div class="img-placeholder-text" style="margin-top:14px;">Creating your image...<br>Claude is enhancing your prompt ✨<br>This may take 15-30 seconds</div></div>';
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/ai/image',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+TOKEN},
+      body:JSON.stringify({prompt:prompt,size:document.getElementById('imgSize').value,quality:document.getElementById('imgQuality').value})
+    });
+    var data=await res.json();
+    btn.disabled=false;btn.textContent='⚡ GENERATE';
+    if(data&&data.url){
+      if(CURRENT_USER)CURRENT_USER.image_count_month=(CURRENT_USER.image_count_month||0)+1;
+      document.getElementById('imgCount').textContent=CURRENT_USER?CURRENT_USER.image_count_month:'?';
+      area.innerHTML='<div class="img-result">'+
+        '<img src="'+data.url+'" alt="Generated" style="width:100%;border-radius:12px;cursor:pointer;" onclick="window.open(\''+data.url+'\',\'_blank\')">'+
+        '<div class="img-result-info" style="font-size:11px;color:#7a6a9a;margin-top:8px;font-style:italic;">'+escHtml(data.enhanced_prompt||data.revised_prompt||prompt)+'</div>'+
+        '<div style="display:flex;gap:8px;margin-top:10px;">'+
+          '<a href="'+data.url+'" download target="_blank" style="flex:1;padding:10px;border-radius:8px;background:rgba(157,99,255,0.15);border:1px solid rgba(157,99,255,0.3);color:#c084ff;font-size:11px;cursor:pointer;font-family:\'Orbitron\',sans-serif;text-align:center;text-decoration:none;">⬇ DOWNLOAD</a>'+
+          '<button onclick="document.getElementById(\'imgPrompt\').value=\''+escHtml(prompt).replace(/'/g,"\\'")+'\';" style="flex:1;padding:10px;border-radius:8px;background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:#34d399;font-size:11px;cursor:pointer;font-family:\'Orbitron\',sans-serif;">↺ REGENERATE</button>'+
+        '</div>'+
+      '</div>';
+      playSound('receive');
+      loadImageHistory();
+    } else {
+      area.innerHTML='<div class="img-placeholder"><div class="img-placeholder-text" style="color:#f87171;">'+(data&&data.error?escHtml(data.error):'Generation failed. Try again.')+'</div></div>';
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent='⚡ GENERATE';
+    area.innerHTML='<div class="img-placeholder"><div class="img-placeholder-text" style="color:#f87171;">Generation failed. Check your connection.</div></div>';
   }
+}
+
+async function loadImageHistory(){
+  var el=document.getElementById('imgHistory');
+  if(!el||!TOKEN)return;
+  try{
+    var res=await fetch('https://demented-ai-backend-production.up.railway.app/api/images',{
+      headers:{'Authorization':'Bearer '+TOKEN}
+    });
+    var data=await res.json();
+    if(!data.images||data.images.length===0){
+      el.innerHTML='<div style="font-size:11px;color:#4a3a6a;text-align:center;padding:20px;grid-column:1/-1;">No images yet — generate your first one!</div>';
+      return;
+    }
+    el.innerHTML='';
+    data.images.forEach(function(img){
+      var div=document.createElement('div');
+      div.style.cssText='position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(157,99,255,0.15);background:rgba(8,0,28,0.4);cursor:pointer;';
+      div.innerHTML=
+        '<img src="'+img.cloudinary_url+'" alt="'+escHtml(img.prompt)+'" style="width:100%;aspect-ratio:1;object-fit:cover;display:block;" onclick="window.open(\''+img.cloudinary_url+'\',\'_blank\')">'+
+        '<div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(2,0,8,0.9));padding:8px;">'+
+          '<div style="font-size:10px;color:#9a8aaa;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+escHtml(img.prompt)+'</div>'+
+          '<div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">'+
+            '<div style="font-size:9px;color:#4a3a6a;">'+new Date(img.created_at).toLocaleDateString()+'</div>'+
+            '<div style="display:flex;gap:4px;">'+
+              '<a href="'+img.cloudinary_url+'" download target="_blank" style="padding:3px 7px;border-radius:4px;background:rgba(157,99,255,0.2);border:none;color:#c084ff;font-size:9px;cursor:pointer;text-decoration:none;">⬇</a>'+
+              '<button onclick="deleteImage('+img.id+',this)" style="padding:3px 7px;border-radius:4px;background:rgba(239,68,68,0.2);border:none;color:#f87171;font-size:9px;cursor:pointer;">🗑</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>';
+      el.appendChild(div);
+    });
+  }catch(e){
+    el.innerHTML='<div style="font-size:11px;color:#f87171;text-align:center;padding:20px;grid-column:1/-1;">Failed to load history</div>';
+  }
+}
+
+async function deleteImage(id,btn){
+  if(!confirm('Delete this image?'))return;
+  try{
+    await fetch('https://demented-ai-backend-production.up.railway.app/api/images/'+id,{
+      method:'DELETE',
+      headers:{'Authorization':'Bearer '+TOKEN}
+    });
+    showToast('Image deleted','success');
+    loadImageHistory();
+  }catch(e){showToast('Failed to delete','error');}
 }
 
 // CODE EDITOR
